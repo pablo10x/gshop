@@ -15,13 +15,13 @@
 	];
 </script>
 
-<nav class=" bg-slate-200 text-white shadow-lg">
+<nav class=" bg-gradient-to-b  from-gray-700 to-slate-500 py-5">
 	<div class="mx-auto max-w-7xl px-6 sm:px-4 lg:px-2">
 		<div class="flex h-16 items-center justify-between">
-			<DarkMode/>
+			
 			<!-- Logo -->
-			<div class="flex items-center text-gray-900 font-rubik">
-				<a href="/" class="flex-shrink-0 text-xl font-bold font-">
+			<div class="flex items-center text-slate-200 text-pretty font-roboto ">
+				<a href="/" class="flex-shrink-0 sm:text-4xl md:text-4xl lg:text-6xl font-bold">
 					Miral Store </a>
 			</div>
 
@@ -31,7 +31,7 @@
 					{#each navItems as item}
 						<a
 							href={item.href}
-							class="rounded-md px-3 py-2 text-sm font-medium text-black transition duration-300 hover:bg-gray-700 hover:text-white {$page
+							class="rounded-md px-3 py-2 text-2x1 font-bold font-roboto  uppercase text-slate-100 transition duration-300 hover:bg-gray-700 hover:text-white {$page
 								.url.pathname === item.href
 								? 'bg-gray-900 text-red-400'
 								: ''}"
