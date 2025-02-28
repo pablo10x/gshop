@@ -10,19 +10,18 @@
 
 	const navItems = [
 		{ name: 'Home', href: '/' },
-		{ name: 'Play', href: '/play' },
-		{ name: 'Leaderboard', href: '/leaderboard' },
-		{ name: 'Rules', href: '/rules' },
-		{ name: 'Profile', href: '/profile' }
+		{ name: 'Profile', href: '/profile' },
+		{ name: 'test', href: '/test' }
 	];
 </script>
 
-<nav class="bg-gray-800 text-white shadow-lg">
+<nav class="bg-sky-800 text-white shadow-lg">
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		<div class="flex h-16 items-center justify-between">
 			<!-- Logo -->
 			<div class="flex items-center">
-				<a href="/" class="flex-shrink-0 text-xl font-bold"> Cops & Robbers </a>
+				<a href="/" class="flex-shrink-0 text-xl font-bold">
+					Miral Store </a>
 			</div>
 
 			<!-- Desktop Navigation -->
