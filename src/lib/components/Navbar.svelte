@@ -1,7 +1,7 @@
 <script>
 	import { page } from '$app/stores';
 	import { Menu, X } from 'lucide-svelte';
-
+  import {DarkMode} from 'flowbite-svelte';
 	let isOpen = false;
 
 	function toggleMenu() {
@@ -15,12 +15,13 @@
 	];
 </script>
 
-<nav class="bg-sky-800 text-white shadow-lg">
-	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+<nav class=" bg-slate-200 text-white shadow-lg">
+	<div class="mx-auto max-w-7xl px-6 sm:px-4 lg:px-2">
 		<div class="flex h-16 items-center justify-between">
+			<DarkMode/>
 			<!-- Logo -->
-			<div class="flex items-center">
-				<a href="/" class="flex-shrink-0 text-xl font-bold">
+			<div class="flex items-center text-gray-900 font-rubik">
+				<a href="/" class="flex-shrink-0 text-xl font-bold font-">
 					Miral Store </a>
 			</div>
 
@@ -30,9 +31,9 @@
 					{#each navItems as item}
 						<a
 							href={item.href}
-							class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 transition duration-300 hover:bg-gray-700 hover:text-white {$page
+							class="rounded-md px-3 py-2 text-sm font-medium text-black transition duration-300 hover:bg-gray-700 hover:text-white {$page
 								.url.pathname === item.href
-								? 'bg-gray-900 text-white'
+								? 'bg-gray-900 text-red-400'
 								: ''}"
 						>
 							{item.name}
