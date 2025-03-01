@@ -4,7 +4,7 @@
 
   import { DarkMode, Button } from "flowbite-svelte";
   import { UserCircleSolid } from "flowbite-svelte-icons";
-
+import Icon from "@iconify/svelte";
   let isOpen = false;
 
   function toggleMenu() {
@@ -38,9 +38,8 @@
         <div class="ml-10 flex items-baseline space-x-5">
           <div class=" flex flex-col p-5">
             <div class="flex space-x-4"></div>
-            <UserCircleSolid class="text-slate-200 " size=xl> </UserCircleSolid>
-            <UserCircleSolid class="text-slate-200 " size=lg> </UserCircleSolid>
-          </div>
+<Icon class="hover: text-red-400" icon="material-symbols:account-box-sharp" width="48" height="48"  style="color: #131212" />
+        </div>
 
      
 
