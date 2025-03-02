@@ -105,7 +105,7 @@
                 />
                 <Label
                   class="font-kanit font-bold text-zink-500  uppercase px-3"
-                  >TND 0.00 $
+                  >DT 0.00 $
                 </Label>
               </Badge>
             </div>
