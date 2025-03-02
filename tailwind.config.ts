@@ -13,7 +13,7 @@ export default {
       fontFamily: {
         roboto: ["Roboto Mono", "sans-serif"],
         rubik: ["Rubik", "sans-serif"],
-        kanit: ["Kanit", "sans-serif"]
+        kanit: ["Kanit", "sans-serif"],
       },
       colors: {
         // flowbite-svelte

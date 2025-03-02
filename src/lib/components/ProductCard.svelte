@@ -1,61 +1,31 @@
-<script lang="ts">
-  import { fade } from "svelte/transition";
-  import type { Product } from "$lib/types/product";
-
-  export let product: Product;
-  export let onAddToCart: (product: Product) => void;
+<script>
+  export let name = "Product Name";
+  export let price = "$0.00";
+  export let image = "https://via.placeholder.com/150";
+  export let promo = ""; // Optional promo text
+  export let onSale = false; // Boolean to indicate sale
+  export let info = "Short product description.";
 </script>
 
-<div
-  class="group relative bg-white rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300 ease-in-out"
-  in:fade={{ duration: 300 }}
->
-  <div class="relative overflow-hidden rounded-t-lg">
-    <img
-      src={product.image}
-      alt={product.name}
-      class="w-full h-64 object-cover transform transition-transform duration-300 group-hover:scale-105"
-    />
-    <div
-      class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent"
-    >
-      {#if product.onSale}
-        <span class="bg-red-500 text-white px-3 py-1 text-sm rounded-full">
-          SALE
-        </span>
-      {:else if product.isNew}
-        <span class="bg-blue-500 text-white px-3 py-1 text-sm rounded-full">
-          NEW
-        </span>
-      {/if}
-    </div>
+<div 
+  class="relative bg-zinc-200 rounded-2xl shadow-lg hover:shadow-2xl transition-shadow duration-300 overflow-hidden w-full transform hover:-translate-y-1">
+  <img src={image} alt={name} 
+   class="w-full aspect-[4/5] object-cover transition-transform duration-300 hover:scale-105" />
+  
+  <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/60 to-transparent p-4">
+    <p class="text-white text-lg font-bold">{price}</p>
+    {#if promo}
+      <span class="text-sm text-yellow-400 font-semibold">{promo}</span>
+    {/if}
+    {#if onSale}
+      <span class="ml-2 bg-red-500 text-white px-2 py-1 text-xs font-bold rounded">On Sale</span>
+    {/if}
+    <h2 class="text-white text-xl font-semibold mt-2">{name}</h2>
+    <p class="text-gray-300 text-sm">{info}</p>
   </div>
-
-  <div class="p-4">
-    <div class="flex items-center justify-between mb-2">
-      <h3 class="text-lg font-semibold text-gray-800">{product.name}</h3>
-      <div class="flex items-center">
-        <span class="text-yellow-400">★</span>
-        <span class="ml-1 text-gray-600">{product.rating.toFixed(1)}</span>
-      </div>
-    </div>
-
-    <div class="flex items-center justify-between">
-      <p class="text-xl font-bold text-gray-900">
-        ${product.price.toFixed(2)}
-        {#if product.onSale && product.originalPrice}
-          <span class="ml-2 text-sm text-red-500 line-through">
-            ${product.originalPrice.toFixed(2)}
-          </span>
-        {/if}
-      </p>
-      <button
-        on:click={() => onAddToCart(product)}
-        class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full
-              transition-colors duration-200 text-sm font-medium transform hover:scale-105"
-      >
-        Add to Cart
-      </button>
-    </div>
-  </div>
+  
+  <button 
+    class="absolute bottom-4 right-4 bg-gray-800 hover:bg-lime-600 text-white px-4 py-2 rounded-xl transition-transform duration-300 hover:scale-105">
+    Add to Cart
+  </button>
 </div>

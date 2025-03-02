@@ -1,10 +1,14 @@
 <script>
   import { page } from "$app/stores";
   import { Menu, X, UserRound } from "lucide-svelte";
-
-  import { DarkMode, Button } from "flowbite-svelte";
+  import {
+    AddressBookOutline,
+    UserSolid,
+    SearchSolid,
+  } from "flowbite-svelte-icons";
+  import { DarkMode, Button, Badge, Label, Tooltip } from "flowbite-svelte";
   import { UserCircleSolid } from "flowbite-svelte-icons";
-import Icon from "@iconify/svelte";
+  import Icon from "@iconify/svelte";
   let isOpen = false;
 
   function toggleMenu() {
@@ -19,12 +23,12 @@ import Icon from "@iconify/svelte";
 </script>
 
 <nav
-  class="sticky top-0 z-50 bg-gradient-to-b from-blue-300 to-gray-800/20 py-5 backdrop-blur-xl border-b border-gray-600"
+  class="sticky top-0 z-50 b bg-zinc-800 py-5 backdrop-blur-xl border-slate-600"
 >
   <div class="mx-auto max-w-7xl px-6 sm:px-4 lg:px-2">
     <div class="flex h-16 items-center justify-between">
       <!-- Logo -->
-      <div class="flex items-center text-slate-800 text-pretty font-roboto">
+      <div class="flex items-center bg- text-sky-100 text-pretty font-roboto">
         <a
           href="/"
           class="flex-shrink-0 sm:text-4xl md:text-4xl lg:text-5xl font-bold"
@@ -34,42 +38,79 @@ import Icon from "@iconify/svelte";
       </div>
 
       <!-- Desktop Navigation -->
-      <div class="hidden md:block">
-        <div class="ml-10 flex items-baseline space-x-5">
-          <div class=" flex flex-col p-5">
-            <div class="flex space-x-4"></div>
-<Icon class="hover: text-red-400" icon="material-symbols:account-box-sharp" width="48" height="48"  style="color: #131212" />
+      <div class=" xl:block">
+        <div class="ml-10 flex items-baseline space-x-6">
+          <div class=" flex flex-row space-x-2 p-2">
+            <div class=" ">
+              <!--User icon-->
+              <Tooltip triggeredBy="#user_tooltip" type="light" placement="top"
+                >Account</Tooltip
+              >
+              <svg
+                id="user_tooltip"
+                class="  text-sky-100 hover:text-lime-200 w-[48px] h-[48px] dark:text-white"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4h-4Z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </div>
+
+            <div>
+              <!--Search icon-->
+              <svg
+                id="search_tooltip"
+                class="my-1 w-[40px] h-[40px] text-sky-100 hover:text-lime-200 dark:text-white"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Z" />
+                <path
+                  fill-rule="evenodd"
+                  d="M21.707 21.707a1 1 0 0 1-1.414 0l-3.5-3.5a1 1 0 0 1 1.414-1.414l3.5 3.5a1 1 0 0 1 0 1.414Z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <Tooltip
+                triggeredBy="#search_tooltip"
+                type="light"
+                placement="top">Search</Tooltip
+              >
+            </div>
+
+            <!--shopping cart icon-->
+            <div class=" flex flew-col">
+              <Badge
+                rounded
+                color="dark"
+                class="font-rubik font-bold hover:bg-lime-200 "
+              >
+                <Icon
+                  icon="material-symbols-light:shopping-cart"
+                  width="48"
+                  height="38"
+                  style="color: #27272a"
+                />
+                <Label
+                  class="font-kanit font-bold text-zink-500  uppercase px-3"
+                  >TND 0.00 $
+                </Label>
+              </Badge>
+            </div>
+          </div>
         </div>
-
-     
-
-          <!--{#each navItems as item}
-						<a
-							href={item.href}
-							class="rounded-md px-3 py-2 text-2x1 font-bold font-roboto  uppercase text-slate-100 transition duration-300 hover:bg-gray-700 hover:text-white {$page
-								.url.pathname === item.href
-								? 'bg-gray-900 text-red-400'
-								: ''}"
-						>
-							{item.name}
-						</a>
-					{/each}-->
-        </div>
-      </div>
-
-      <!-- Mobile Menu Button -->
-      <div class="-mr-2 flex md:hidden">
-        <button
-          on:click={toggleMenu}
-          class="inline-flex items-center justify-center rounded-md bg-gray-900 p-2 text-gray-400 hover:bg-gray-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-        >
-          <span class="sr-only">Open main menu</span>
-          {#if isOpen}
-            <X size={24} />
-          {:else}
-            <Menu size={24} />
-          {/if}
-        </button>
       </div>
     </div>
   </div>
