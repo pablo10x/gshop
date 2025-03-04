@@ -18,7 +18,7 @@
 <div class=""> <!--container-->
   <div class="ml-2 mt-2 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 w-full">
     {#each products as product}
-      <ProductCard name={product.name} price={product.price} image={product.image} />
+      <ProductCard id={product.id} name={product.name} price={product.price} image={product.image} />
     {/each}
   </div>
 </div>
