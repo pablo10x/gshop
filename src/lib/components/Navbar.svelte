@@ -33,19 +33,17 @@
           href="/"
           class="flex-shrink-0 sm:text-4xl md:text-4xl lg:text-5xl font-bold"
         >
-          Miral Store
+           Store
         </a>
       </div>
 
       <!-- Desktop Navigation -->
       <div class=" xl:block">
-        <div class="ml-10 flex items-baseline space-x-6">
-          <div class=" flex flex-row space-x-2 p-2">
+        <div class="ml-10 flex items-baseline">
+          <div class=" flex flex-row space-x-2">
             <div class=" ">
               <!--User icon-->
-              <Tooltip triggeredBy="#user_tooltip" type="light" placement="top"
-                >Account</Tooltip
-              >
+
               <svg
                 id="user_tooltip"
                 class="  text-sky-100 hover:text-lime-200 w-[48px] h-[48px] dark:text-white"
@@ -66,48 +64,29 @@
 
             <div>
               <!--Search icon-->
-              <svg
-                id="search_tooltip"
-                class="my-1 w-[40px] h-[40px] text-sky-100 hover:text-lime-200 dark:text-white"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Z" />
-                <path
-                  fill-rule="evenodd"
-                  d="M21.707 21.707a1 1 0 0 1-1.414 0l-3.5-3.5a1 1 0 0 1 1.414-1.414l3.5 3.5a1 1 0 0 1 0 1.414Z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-              <Tooltip
-                triggeredBy="#search_tooltip"
-                type="light"
-                placement="top">Search</Tooltip
-              >
+              <Icon
+                icon="mynaui:search-circle-solid"
+                class=" text-sky-100 hover:text-sky-300 transition-colors duration-300 text-2x1 sm:text-2x1 md:text-4xl lg:text-5xl xl:text-5xl"
+              />
             </div>
 
             <!--shopping cart icon-->
             <div class=" flex flew-col">
-              <Badge
-                rounded
-                color="dark"
-                class="font-rubik font-bold hover:bg-lime-200 "
+              <div
+                class=" flex flex-row rounded-md bg-white font-rubik font-bold hover:bg-lime-200 items-center space-x-3"
               >
                 <Icon
+                  class="w-8 h-8 md:w-8 md:h-8 lg:h-10 lg:w-10"
                   icon="material-symbols-light:shopping-cart"
                   width="48"
                   height="38"
                   style="color: #27272a"
                 />
                 <Label
-                  class="font-kanit font-bold text-zink-500  uppercase px-3"
+                  class="hidden sm:block font-kanit font-bold text-zink-500  uppercase px-3"
                   >DT 0.00 $
                 </Label>
-              </Badge>
+              </div>
             </div>
           </div>
         </div>
