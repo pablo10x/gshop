@@ -12,7 +12,7 @@ export const cart = writable<CartItem[]>([], (set) => {
     }
   }
 
-  return () => { }; // Cleanup function (not needed here)
+  return () => {}; // Cleanup function (not needed here)
 });
 
 // Only subscribe to localStorage updates in the browser

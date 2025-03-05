@@ -1,6 +1,4 @@
 {
-	"/": [
-		"src/routes/+page.server.ts"
-	],
-	"/product/[id]": []
+  "/": ["src/routes/+page.server.ts"],
+  "/product/[id]": []
 }
