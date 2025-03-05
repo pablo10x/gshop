@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { cart, addToCart } from "$lib/stores/cart"; // Importing the cart store and addToCart function
+  import { cart, addToCart , removeFromCart } from "$lib/stores/cart"; // Importing the cart store and addToCart function
   export let id = 1;
   export let name = "Product Name";
   export let price = "$0.00";
@@ -25,6 +25,8 @@
 
     addToCart(newproduct);
   }
+
+  
 </script>
 
 <div  

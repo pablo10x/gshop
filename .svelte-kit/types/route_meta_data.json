@@ -2,6 +2,5 @@
 	"/": [
 		"src/routes/+page.server.ts"
 	],
-	"/product/[id]": [],
-	"/test": []
+	"/product/[id]": []
 }
