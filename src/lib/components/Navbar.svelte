@@ -8,6 +8,8 @@
     NavHamburger,
     Input,
     Label,
+    Avatar,
+    
   } from "flowbite-svelte";
  
   import SearchProduct from '$lib/components/SearchProduct.svelte'
@@ -16,22 +18,26 @@
   const storeName = import.meta.env.VITE_STORE_NAME;
   console.log(import.meta.env);
 </script>
-
-<div class=" flex flex-col bg-white rounded-md drop-shadow-md p-10">
- 
- <!--search area-->
- <SearchProduct></SearchProduct> 
-  <NavBrand class="justify-center" href="/">
+<div class="bg-zinc-600 py-1 space-y-1 font-rubik justify-center text-center text-primary-500 text-2xl" >Welcome to our store</div> 
+<div class="flex flex-col bg-zinc-100 drop-shadow-xl p-10">
+  <!--search area-->
+  
+  <NavBrand class="flex justify-center items-center relative w-full" href="/">
     <!--<img src="/images/flowbite-svelte-icon-logo.svg" class="me-3 h-6 sm:h-9" alt="Flowbite Logo" />-->
-    <span
-      class="self-center whitespace-nowrap text-xl font-semibold text-stone-700"
-      >Miral store</span
-    >
+    
+    <div class="absolute left-0 flex flex-row" >
+      <SearchProduct></SearchProduct>
+    </div> 
+    <span class="text-xl font-semibold text-stone-700">Miral store</span>
    
+    <div class="absolute right-0 flex flex-row gap-x-4">
+      <Avatar rounded class="hover:scale-105 hover:text-primary-500"></Avatar>
+      <Cart></Cart>
+    </div>
   </NavBrand>
-  <Cart></Cart>
+  <!--
   <NavUl {activeUrl}>
     <NavLi href="/">Home</NavLi>
     <NavLi href="/">Collections</NavLi>
-  </NavUl>
+  </NavUl>-->
 </div>
