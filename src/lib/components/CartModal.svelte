@@ -6,7 +6,7 @@
   function getTotalPrice() {
     return $cart
       .reduce((sum, item) => sum + item.price * item.quantity, 0)
-      .toFixed(2);
+      .toFixed(2); 
   }
 
   function proceedToCheckout() {
