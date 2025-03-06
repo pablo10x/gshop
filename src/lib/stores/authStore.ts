@@ -6,6 +6,13 @@ import { supabase } from '$lib/supabase';
 export const user = writable<User | null>(null);
 export const session = writable<Session | null>(null);
 
+
+export function RemoveUser() {
+  user.set(null);
+  session.set(null);
+}
+
+
 export const initializeAuthStore = async () => {
   // Get initial session
   const { data: { session: initialSession } } = await supabase.auth.getSession();

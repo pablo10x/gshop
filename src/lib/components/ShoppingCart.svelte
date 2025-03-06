@@ -29,7 +29,7 @@
     on:click={() => isCartOpen.update((open) => !open)}
     class="cart-button bg-stone-300 hover:bg-stone-200 text-primary-500 hover:text-black font-semibold hover:scale-105 transition-transform duration-300"
   >
-    <ShoppingBagSolid class="h-6 w-6 cart-icon hover:scale-110 transition-transform"></ShoppingBagSolid>
+    <ShoppingBagSolid class="h-8 w-8 cart-icon hover:scale-110 transition-transform"></ShoppingBagSolid>
    
   </Button>
 </div>

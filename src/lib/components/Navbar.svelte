@@ -26,16 +26,14 @@
 <div class="flex flex-col bg-zinc-100 drop-shadow-xl p-10">
   <!--search area-->
   
-  <NavBrand class="flex justify-center items-center relative w-full" href="/">
+  <NavBrand class="flex justify-center items-center relative w-full " href="/">
     <!--<img src="/images/flowbite-svelte-icon-logo.svg" class="me-3 h-6 sm:h-9" alt="Flowbite Logo" />-->
     
-    <div class="absolute left-0 flex flex-row">
-      <SearchProduct></SearchProduct>
-    </div> 
-    <span class="text-xl font-semibold text-stone-700">Miral store</span>
+    
+    <span class="text-1x1 font-semibold text-stone-700 font-roboto">Miral store</span>
    
-    <div class="absolute right-0 flex flex-row gap-x-4">
-      <Avatar rounded class="hover:scale-105 hover:text-primary-500" href="/account"></Avatar>
+    <div class="absolute right-0 flex flex-row gap-x-4 justify-center items-center">
+      <Avatar rounded size=sm class="  hover:scale-105 hover:text-primary-500" href="/account"></Avatar>
       <Cart></Cart>
     </div>
   </NavBrand>

@@ -1,5 +1,5 @@
 import { supabase } from './supabase'
-import { user } from './stores/authStore'
+import { user, RemoveUser } from './stores/authStore'
 import { goto } from '$app/navigation'
 
 // Sign up with email and password
@@ -21,6 +21,8 @@ export const signIn = async (email: string, password: string) => {
   })
 
   if (error) throw error
+  console.log("signed in")
+  goto('/auth/callback')
   return data
 }
 
@@ -28,6 +30,7 @@ export const signIn = async (email: string, password: string) => {
 export const signOut = async () => {
   const { error } = await supabase.auth.signOut()
   if (error) throw error
+  RemoveUser();
   goto('/')
 }
 

@@ -20,6 +20,7 @@ import type { User, Session } from '@supabase/supabase-js';
       console.log(data.session?.user.user_metadata.full_name);
       user.set(data.session?.user as User);
       session.set(data.session);
+      goto("/account");
     }
   });
 </script>
