@@ -2,7 +2,8 @@
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
   import { supabase } from "$lib/supabase";
-
+import type { User, Session } from '@supabase/supabase-js';
+  import { session, user } from "$lib/stores/authStore";
   onMount(async () => {
     // Handle the OAuth callback
     const { error, data } = await supabase.auth.getSession();
@@ -16,7 +17,9 @@
     } else {
       // Redirect to a protected page after successful authentication
       //goto("/account");
-      console.log("acc");
+      console.log(data.session?.user.user_metadata.full_name);
+      user.set(data.session?.user as User);
+      session.set(data.session);
     }
   });
 </script>
