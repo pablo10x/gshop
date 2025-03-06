@@ -33,8 +33,10 @@
     "vite": "^5.4.14"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
     "dotenv": "^16.4.7",
-    "svelte-portal": "^2.2.1"
+    "svelte-portal": "^2.2.1",
+    "sveltkit": "^1.0.1"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

@@ -1,4 +1,4 @@
-import { writable } from "svelte/store";
+import { writable, derived } from "svelte/store";
 import type { CartItem } from "$lib/types/product";
 
 // Check if we're in the browser environment
@@ -12,7 +12,7 @@ export const cart = writable<CartItem[]>([], (set) => {
     }
   }
 
-  return () => {}; // Cleanup function (not needed here)
+  return () => { }; // Cleanup function (not needed here)
 });
 
 // Only subscribe to localStorage updates in the browser
@@ -21,6 +21,11 @@ if (isBrowser) {
     localStorage.setItem("cart", JSON.stringify(value));
   });
 }
+
+// Derived store to get the count of items in the cart
+export const itemsCount = derived(cart, ($cart) => {
+  return $cart.reduce((count, item) => count + item.quantity, 0);
+});
 
 // Utility functions
 export function addToCart(item: CartItem) {

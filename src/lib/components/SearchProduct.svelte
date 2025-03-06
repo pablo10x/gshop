@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Input } from "flowbite-svelte";
   import { SearchOutline, OutdentSolid } from "flowbite-svelte-icons";
-  
+  import {browser} from '$app/environment';
   export let placeholder = "Search for product";
   export let onSearch = () => {};
   
@@ -25,6 +25,8 @@ function closeSearch(event: MouseEvent) {
 }
 
   // Close when clicking outside
+
+  if(browser)
   document.addEventListener("click", closeSearch);
 </script>
 
