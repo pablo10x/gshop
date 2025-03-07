@@ -5,6 +5,8 @@
   import { Card, Button, Label, Input } from "flowbite-svelte";
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
+  import { supabase } from "$lib/supabase";
+
   let editMode = false;
   let formData = {
     full_name: $userProfile?.full_name || "",
@@ -12,6 +14,7 @@
     phone: $userProfile?.phone || "",
   };
 
+  let error: string | null = null;
   async function handleUpdateProfile() {
     if ($user) {
       try {

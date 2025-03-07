@@ -23,16 +23,16 @@
 
 
 
-<div class="relative">
+<div class="relative w-full h-full">
   <!-- Cart count badge -->
-  <div class="absolute -top-2 -right-2 bg-primary-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+  <div class="absolute -top-2 -right-2 bg-primary-500 text-white rounded-full w-4 h-4 md:w-5 md:h-5 flex items-center justify-center text-[10px] md:text-xs font-bold">
     {$itemsCount}
   </div>
   
   <!-- Cart button -->
   <Button
     on:click={() => isCartOpen.update((open) => !open)}
-    class="!p-1.5 bg-stone-600 hover:bg-stone-200 text-primary-500 hover:text-black rounded-full"
+    class="!p-1 w-full h-full bg-transparent hover:bg-transparent text-stone-600 hover:text-primary-500 rounded-full"
   >
     <ShoppingBagSolid class="h-full w-full" />
   </Button>

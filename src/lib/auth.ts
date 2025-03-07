@@ -1,17 +1,43 @@
 import { supabase } from './supabase'
 import { user, RemoveUser } from './stores/authStore'
 import { goto } from '$app/navigation'
-
+import { createUserProfile } from './services/profileService'
 // Sign up with email and password
-export const signUp = async (email: string, password: string) => {
+export const signUp = async (
+  email: string,
+  password: string,
+  metadata?: {
+    full_name?: string;
+    phone?: string;
+  }
+) => {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-  })
+    options: {
+      data: metadata
+    }
+  });
 
-  if (error) throw error
-  return data
-}
+  if (error) throw error;
+
+  // If signup successful, create user profile
+  if (data.user) {
+    try {
+      await createUserProfile(data.user.id, {
+        full_name: metadata?.full_name || '',
+        phone: metadata?.phone || '',
+        user_id: data.user.id
+      });
+    } catch (profileError) {
+      console.error('Error creating user profile:', profileError);
+    }
+  }
+
+  console.log("signed up");
+  goto('/auth/callback');
+  return data;
+};
 
 // Sign in with email and password
 export const signIn = async (email: string, password: string) => {
@@ -28,10 +54,16 @@ export const signIn = async (email: string, password: string) => {
 
 // Sign out
 export const signOut = async () => {
-  const { error } = await supabase.auth.signOut()
-  if (error) throw error
-  RemoveUser();
-  goto('/')
+  try {
+    const { error } = await supabase.auth.signOut()
+    if (error) throw error
+
+    RemoveUser();
+    goto('/');
+  } catch (error) {
+    console.error('Error during sign out:', error);
+    throw error;
+  }
 }
 
 // Sign in with OAuth (Google, GitHub, etc.)
