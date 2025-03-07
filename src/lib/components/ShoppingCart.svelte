@@ -23,17 +23,23 @@
 
 
 
-<div class="relative inline-block">
-  <div class="absolute right-[10%] top-2 font-rubik font-bold text-primary-500">{$itemsCount}</div>
+<div class="relative">
+  <!-- Cart count badge -->
+  <div class="absolute -top-2 -right-2 bg-primary-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+    {$itemsCount}
+  </div>
+  
+  <!-- Cart button -->
   <Button
     on:click={() => isCartOpen.update((open) => !open)}
-    class="cart-button bg-stone-300 hover:bg-stone-200 text-primary-500 hover:text-black font-semibold hover:scale-105 transition-transform duration-300"
+    class="!p-1.5 bg-stone-600 hover:bg-stone-200 text-primary-500 hover:text-black rounded-full"
   >
-    <ShoppingBagSolid class="h-8 w-8 cart-icon hover:scale-110 transition-transform"></ShoppingBagSolid>
-   
+    <ShoppingBagSolid class="h-full w-full" />
   </Button>
 </div>
 
 <style>
-  
+  :global(.cart-button) {
+    @apply p-0 border-none shadow-none;
+  }
 </style>

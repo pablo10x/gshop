@@ -1,7 +1,7 @@
 <script>
 	import { initializeAuthStore } from "$lib/stores/authStore";
 	import { browser } from '$app/environment'
-  
+  import { onMount } from 'svelte';
 	
 	import "../app.css";
   import Navbar from "../lib/components/Navbar.svelte";
@@ -10,11 +10,9 @@
   // cart
   import CartModal from "$lib/components/CartModal.svelte";
 
-  export const load = async () => {
-    if (browser) {
-      await initializeAuthStore();
-    }
-  };
+  onMount(() => {
+    initializeAuthStore();
+  });
 </script>
 
 <div class="min-h-screen bg-gradient-to-b bg-zinc-200">
