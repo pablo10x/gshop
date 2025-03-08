@@ -84,17 +84,21 @@ export async function loadCart(userId: string) {
 export async function saveCartToDatabase(userId: string) {
   const cartItems = get(cart);
   for (const item of cartItems) {
-    await fetch(`/api/cart/${userId}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        product_id: item.id, // Required field for the database
-        price: item.product?.price || 0,
-        quantity: item.quantity,
-        user_id: userId // Using the correct column name
-      })
-    });
+    try {
+      await fetch(`/api/cart/${userId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          product_id: item.id,
+          price: item.product?.price || 0,
+          quantity: item.quantity,
+          user_id: userId
+        })
+      });
+    } catch (error) {
+      console.error('Failed to save cart item to database:', error);
+    }
   }
 }
