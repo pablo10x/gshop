@@ -1,7 +1,9 @@
 <script lang="ts">
-  import { cart, addToCart , removeFromCart } from "$lib/stores/cart";
-  import {ShoppingBagSolid} from 'flowbite-svelte-icons'
-  import type {Product , CartItem} from '$lib/types/product'
+  import { cart, addToCart, removeFromCart } from "$lib/stores/cartStore";
+  import { ShoppingBagSolid } from 'flowbite-svelte-icons';
+  import type { Product, CartItem } from '$lib/types/product';
+  import { get } from 'svelte/store';
+  import { user } from '$lib/stores/authStore';
 
   export let id = 1;
   export let name = "Product Name";
@@ -13,23 +15,22 @@
 
   // Convert price to a number for calculations
   const numericPrice = parseFloat(price.replace('$', '').replace(',', ''));
-  
+
   // Check if item is already in cart
   $: isInCart = $cart.some(item => item.id === id);
-  
+
   // Add item to cart
   function handleAddToCart() {
-    const newproduct: CartItem = {
-      id: id,
-      name: name,
-      price: numericPrice,
-      quantity: 1,
-    };
+  const currentUser = get(user);
+  const cartItem: CartItem = {
+    id: Date.now(), // or any unique identifier
+    product_id: id,
+    quantity: 1,
+    user_id: currentUser?.id
+  };
 
-    console.log(`adding cart id: ${id}`)
-
-    addToCart(newproduct);
-  }
+  addToCart(cartItem);
+}
 </script>
 
 <div class="bg-white w-full sm:w-72 max-w-md mx-auto  border border-zinc-200  shadow-md overflow-hidden transition-all duration-300 hover:shadow-2xl group">
@@ -66,23 +67,9 @@
     {/if}
   </div>
 
-  {#if isInCart}
-    <div class="px-4 pb-4 sm:px-6 sm:pb-6">
-      <button 
-        on:click={() => removeFromCart(id)}
-        class="w-full bg-red-50 text-red-600 hover:bg-red-100 py-2 rounded-lg text-sm sm:text-base transition-colors"
-      >
-        Remove from Cart
-      </button>
-    </div>
-  {/if}
+  
 </div>
 
 <style>
-  .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
+  
 </style>

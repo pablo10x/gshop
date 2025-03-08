@@ -1,6 +1,6 @@
 <script lang="ts">
   import { ShoppingBagSolid } from 'flowbite-svelte-icons';
-  import { cart, removeFromCart, itemsCount } from "$lib/stores/cart";
+  import { cart, removeFromCart, itemsCount } from "$lib/stores/cartStore";
   import { isCartOpen } from "$lib/stores/ui";
   import { Button } from "flowbite-svelte";
 

@@ -2,32 +2,56 @@
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
   import { supabase } from "$lib/supabase";
-import type { User, Session } from '@supabase/supabase-js';
-  import { session, user } from "$lib/stores/authStore";
+  import { user, session, userProfile } from "$lib/stores/authStore";
+  import { ensureUserAccount } from "$lib/services/accountService";
+  import { Spinner } from "flowbite-svelte";
+
+  let error = '';
+  let loading = true;
+
   onMount(async () => {
-    // Handle the OAuth callback
-    const { error, data } = await supabase.auth.getSession();
+    try {
+      const { data, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError) throw sessionError;
+      
+      if (data?.session) {
+        // Set auth stores
+        user.set(data.session.user);
+        session.set(data.session);
+        
+        // Ensure profile exists
+        /* const profile = await ensureUserAccount(
+          data.session.user.id,
+          data.session.user.user_metadata
+        ); */
+        //userProfile.set(profile);
 
-    console.log("data", data);
-
-    if (error) {
-      console.error("Error during auth callback:", error);
-
-      //goto("/login?error=Authentication failed");
-    } else {
-      // Redirect to a protected page after successful authentication
-      //goto("/account");
-      console.log(data.session?.user.user_metadata.full_name);
-      user.set(data.session?.user as User);
-      session.set(data.session);
-      goto("/");
+        // Redirect to home or intended path
+        const intended = localStorage.getItem('intended_path') || '/';
+        localStorage.removeItem('intended_path');
+        goto(intended);
+      } else {
+        error = 'No session found';
+        goto('/login?error=auth-failed');
+      }
+    } catch (e : any) {
+      console.error('Auth callback error:', e);
+      error = e.message;
+      goto('/login?error=auth-failed');
+    } finally {
+      loading = false;
     }
   });
 </script>
 
 <div class="flex items-center justify-center min-h-screen">
   <div class="text-center">
-    <h1 class="text-xl font-bold mb-4">Completing authentication...</h1>
-    <p>Please wait while we complete the authentication process.</p>
+    {#if loading}
+      <Spinner size="xl" />
+      <h1 class="text-xl font-bold mt-4">Authenticating...</h1>
+    {:else if error}
+      <p class="text-red-500">{error}</p>
+    {/if}
   </div>
 </div>

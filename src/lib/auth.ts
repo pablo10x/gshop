@@ -1,8 +1,39 @@
-import { supabase } from './supabase'
-import { user, RemoveUser } from './stores/authStore'
-import { goto } from '$app/navigation'
-import { createUserProfile } from './services/profileService'
-// Sign up with email and password
+import { supabase } from './supabase';
+import { user, session, userProfile } from './stores/authStore';
+import { goto } from '$app/navigation';
+import { ensureUserAccount } from '$lib/services/accountService';
+import { saveCartToDatabase } from '$lib/stores/cartStore';
+export const signIn = async (email: string, password: string) => {
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) throw error;
+
+    if (data.user) {
+      user.set(data.user);
+      session.set(data.session);
+
+      // Get or create profile
+      const profile = await ensureUserAccount(data.user.id, data.user.user_metadata);
+      userProfile.set(profile);
+
+
+      // Save cart items to database
+      await saveCartToDatabase(data.user.id);
+      // Redirect to home or intended page
+      goto('/');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Sign in error:', error);
+    throw error;
+  }
+};
+
 export const signUp = async (
   email: string,
   password: string,
@@ -11,89 +42,62 @@ export const signUp = async (
     phone?: string;
   }
 ) => {
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: metadata
-    }
-  });
-
-  if (error) throw error;
-
-  // If signup successful, create user profile
-  if (data.user) {
-    try {
-      await createUserProfile(data.user.id, {
-        full_name: metadata?.full_name || '',
-        phone: metadata?.phone || '',
-        user_id: data.user.id
-      });
-    } catch (profileError) {
-      console.error('Error creating user profile:', profileError);
-    }
-  }
-
-  console.log("signed up");
-  goto('/auth/callback');
-  return data;
-};
-
-// Sign in with email and password
-export const signIn = async (email: string, password: string) => {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  })
-
-  if (error) throw error
-  console.log("signed in")
-  goto('/auth/callback')
-  return data
-}
-
-// Sign out
-export const signOut = async () => {
   try {
-    const { error } = await supabase.auth.signOut()
-    if (error) throw error
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: metadata
+      }
+    });
 
-    RemoveUser();
-    goto('/');
+    if (error) throw error;
+
+    if (data.user) {
+      // Don't set user/session yet as email confirmation might be required
+      await ensureUserAccount(data.user.id, metadata);
+      goto('/login?message=check-email');
+    }
+
+    return data;
   } catch (error) {
-    console.error('Error during sign out:', error);
+    console.error('Sign up error:', error);
     throw error;
   }
-}
+};
 
-// Sign in with OAuth (Google, GitHub, etc.)
+export const signInWithProvider = async (provider: 'google' | 'facebook') => {
+  try {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+        // scopes: 'email profile'
+      }
+    });
 
-export const signInWithProvider = async (provider: 'google' | 'github' | 'facebook') => {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider,
-    options: {
-      redirectTo: `${window.location.origin}/auth/callback`,
-    },
-  })
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error(`${provider} sign in error:`, error);
+    throw error;
+  }
+};
 
-  if (error) throw error
-  return data
-}
+export const signOut = async () => {
+  try {
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
 
-// Password reset
-export const resetPassword = async (email: string) => {
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${window.location.origin}/reset-password`,
-  })
+    // Clear all auth stores
+    user.set(null);
+    session.set(null);
+    userProfile.set(null);
 
-  if (error) throw error
-}
-
-// Update password
-export const updatePassword = async (newPassword: string) => {
-  const { error } = await supabase.auth.updateUser({
-    password: newPassword,
-  })
-
-  if (error) throw error
-}
+    // Redirect to login page
+    goto('/login');
+  } catch (error) {
+    console.error('Sign out error:', error);
+    throw error;
+  }
+};

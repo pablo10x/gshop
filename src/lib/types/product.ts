@@ -7,13 +7,17 @@ export interface Product {
   isNew: boolean;
   onSale: boolean;
   originalPrice?: number;
-  info: string; // Optional detailed description
+  info: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
-// CartItem type for the cart
 export interface CartItem {
   id: number;
-  name: string;
-  price: number;
+  user_id?: string;
+  product_id: number;
   quantity: number;
+  created_at?: string;
+  updated_at?: string;
+  product?: Product;  // Joined product data
 }

@@ -77,7 +77,7 @@
   <div class="flex flex-col items-center justify-center min-h-screen px-6 py-8 bg-gray-50">
     <div class="w-full bg-white rounded-lg shadow-md md:mt-0 sm:max-w-md xl:p-0">
       <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-        <Tabs style="underline" bind:activeTab>
+        <Tabs style="underline" >
           <TabItem open title="Login">
             {#if error}
               <Alert color="red" class="mb-4" dismissable>{error}</Alert>
@@ -106,7 +106,7 @@
                   required
                   disabled={loading}
                   placeholder="••••••••"
-                  minlength="6"
+                  minlength={6}
                 />
               </div>
               <Button type="submit" class="w-full" disabled={loading}>
@@ -166,7 +166,7 @@
                   required
                   disabled={loading}
                   placeholder="••••••••"
-                  minlength="6"
+                  minlength={6}
                 />
               </div>
               <div>

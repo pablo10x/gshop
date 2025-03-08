@@ -1,11 +1,13 @@
 <script lang="ts">
-  import { cart, removeFromCart } from "$lib/stores/cart";
+  import { user } from '$lib/stores/authStore';
+  import { cart, removeFromCart } from '$lib/stores/cartStore';
   import { isCartOpen } from "$lib/stores/ui";
   import { Button, Modal } from "flowbite-svelte";
+  import { get } from 'svelte/store';
 
   function getTotalPrice() {
     return $cart
-      .reduce((sum, item) => sum + item.price * item.quantity, 0)
+      .reduce((sum, item) => sum + (item.product?.price ?? 0) * item.quantity, 0)
       .toFixed(2); 
   }
 
@@ -39,12 +41,12 @@
           >
             <div class="flex-grow pr-4">
               <p class="text-sm sm:text-base font-semibold text-gray-800">
-                {item.name}
+                {item.product?.name || name}
               </p>
               <div class="flex items-center gap-2">
                 <span class="text-xs sm:text-sm text-gray-600">
-                  {#if item.quantity > 1}{item.quantity} × {item.price} TND{:else}
-                    {item.price} TND
+                  {#if item.quantity > 1}{item.quantity} × {item.product?.price} TND{:else}
+                    {item.product?.price} TND
                   {/if}
                 </span>
               </div>
@@ -59,7 +61,12 @@
                 outline
                 size="lg"
                 class="py-2 bg-stone-600"
-                on:click={() => removeFromCart(item.id)}
+                on:click={() => {
+                  const currentUser = get(user);
+                  if (currentUser) {
+                    removeFromCart(item.id, currentUser.id);
+                  }
+                }}
               >
                 ✕
               </Button>
@@ -90,8 +97,5 @@
 </Modal>
 
 <style>
-  /* Additional custom styling if needed */
-  :global(.custom-modal .modal) {
-    @apply rounded-lg shadow-2xl max-w-md w-[95%];
-  }
+ 
 </style>
