@@ -14,7 +14,6 @@ import { relations } from "drizzle-orm";
 export const user = pgTable("user", {
   id: uuid("id").primaryKey(), // Changed to uuid to match Supabase auth.users
   email: text("email").unique().notNull(),
-  password: text("password").notNull(),
   address: text("address").notNull().default(""),
   phone: text("phone").notNull().default(""),
   createdAt: timestamp("created_at").defaultNow(),

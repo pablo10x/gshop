@@ -3,89 +3,62 @@ import {
   PUBLIC_SUPABASE_URL,
   PUBLIC_SUPABASE_ANON_KEY,
 } from "$env/static/public";
-import type { UserProfile } from "$lib/models/userProfile";
+import { user } from "$lib/database/schema/schema";
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
+import type { UserModel } from "$lib/models/userModel";
+import { eq, lt, gte, ne } from 'drizzle-orm';
+
 export const supabase = createClient(
   PUBLIC_SUPABASE_URL,
   PUBLIC_SUPABASE_ANON_KEY,
 );
 
-//drizzle setup
+// drizzle setup
 const sql = postgres(PUBLIC_SUPABASE_URL, { ssl: "require" });
 export const db = drizzle(sql);
-//---------------------------------------------
 
-export async function createProfile(
-  profile: Omit<UserProfile, "id" | "created_at" | "updated_at">,
-) {
-  const { data, error } = await supabase
-    .from("profiles")
-    .insert([profile])
-    .select()
-    .single();
 
-  if (error) {
-    console.error(`Error creating profile: ${error.message}`);
-  }
-
-  return data as UserProfile;
-}
+type NewUser = typeof user.$inferInsert;
+// Define base type for user
+type BaseUser = {
+  email: string;
+  address: string;
+  phone: string;
+};
 
 export async function getProfile(userId: string) {
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("user_id", userId)
-    .single();
-
-  if (error) {
-    throw new Error(`Error fetching profile: ${error.message}`);
+  try {
+    const result = await db
+      .select()
+      .from(user)
+      .where(eq(user.id, userId))
+      .limit(1);
+    return result[0] || null;
+  } catch (error) {
+    console.error("Error fetching profile:", error);
+    throw error;
   }
-
-  return data as UserProfile;
 }
 
-export async function updateProfile(
-  userId: string,
-  updates: Partial<UserProfile>,
-) {
-  const { data, error } = await supabase
-    .from("profiles")
-    .update(updates)
-    .eq("user_id", userId)
-    .select()
-    .single();
-
-  if (error) {
-    throw new Error(`Error updating profile: ${error.message}`);
+export async function createProfile(userData: {
+  id: string;
+  email: string;
+  phone?: string;
+}) {
+  try {
+    const result = await db.insert(user).values({
+      id: userData.id,
+      email: userData.email,
+      phone: userData.phone || "",
+      address: "",
+    }).returning();
+    return result[0];
+  } catch (error) {
+    console.error("Error creating profile:", error);
+    throw error;
   }
-
-  return data as UserProfile;
 }
 
-export async function deleteProfile(userId: string) {
-  const { error } = await supabase
-    .from("profiles")
-    .delete()
-    .eq("user_id", userId);
+// Fetch profile using Drizzle ORM
 
-  if (error) {
-    throw new Error(`Error deleting profile: ${error.message}`);
-  }
-
-  return true;
-}
-
-export async function listProfiles() {
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    throw new Error(`Error listing profiles: ${error.message}`);
-  }
-
-  return data as UserProfile[];
-}

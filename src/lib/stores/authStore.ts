@@ -1,15 +1,17 @@
 import { writable } from "svelte/store";
 import type { User, Session } from "@supabase/supabase-js";
-import type { UserProfile } from "$lib/models/userProfile";
-import { getUserProfile } from "$lib/services/profileService";
+import { user as userSchema } from "$lib/database/schema/schema";
+
+
 import {
   ensureUserAccount,
   validateSession,
 } from "$lib/services/accountService";
+type NewUser = typeof userSchema.$inferInsert;
 
 export const user = writable<User | null>(null);
 export const session = writable<Session | null>(null);
-export const userProfile = writable<UserProfile | null>(null);
+export const userProfile = writable<NewUser | null>(null);
 
 export function RemoveUser() {
   user.set(null);
