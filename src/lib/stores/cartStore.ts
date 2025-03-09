@@ -1,6 +1,6 @@
 import { writable, derived, get } from "svelte/store";
 import type { CartItem } from "$lib/models/product";
-import { browser } from '$app/environment';
+import { browser } from "$app/environment";
 
 export const cart = writable<CartItem[]>([], (set) => {
   if (browser) {
@@ -10,7 +10,7 @@ export const cart = writable<CartItem[]>([], (set) => {
     }
   }
 
-  return () => { }; // Cleanup function (not needed here)
+  return () => {}; // Cleanup function (not needed here)
 });
 
 // Only subscribe to localStorage updates in the browser
@@ -28,7 +28,10 @@ export const itemsCount = derived(cart, ($cart) => {
 // Utility functions
 export async function addToCart(item: CartItem) {
   cart.update((items) => {
-    const existingItem = items.find((cartItem) => cartItem.id === item.id && cartItem.user_id === item.user_id);
+    const existingItem = items.find(
+      (cartItem) =>
+        cartItem.id === item.id && cartItem.user_id === item.user_id,
+    );
     if (existingItem) {
       existingItem.quantity += 1;
     } else {
@@ -41,30 +44,31 @@ export async function addToCart(item: CartItem) {
   if (item.user_id) {
     try {
       await fetch(`/api/cart/${item.user_id}`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(item)
+        body: JSON.stringify(item),
       });
     } catch (error) {
-      console.error('Failed to save cart item to database:', error);
+      console.error("Failed to save cart item to database:", error);
     }
-
   }
 }
 
 export async function removeFromCart(id: number, user_id?: string) {
-  cart.update((items) => items.filter((item) => item.id !== id || item.user_id !== user_id));
+  cart.update((items) =>
+    items.filter((item) => item.id !== id || item.user_id !== user_id),
+  );
 
   // Remove cart item from backend if user is logged in
   if (user_id) {
     await fetch(`/api/cart/${user_id}`, {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ id })
+      body: JSON.stringify({ id }),
     });
   }
 }
@@ -72,7 +76,7 @@ export async function removeFromCart(id: number, user_id?: string) {
 export async function loadCart(userId: string) {
   const response = await fetch(`/api/cart/${userId}`);
   if (!response.ok) {
-    throw new Error('Failed to load cart');
+    throw new Error("Failed to load cart");
   }
   const cartItems = await response.json();
 
@@ -86,19 +90,19 @@ export async function saveCartToDatabase(userId: string) {
   for (const item of cartItems) {
     try {
       await fetch(`/api/cart/${userId}`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           product_id: item.id,
           price: item.product?.price || 0,
           quantity: item.quantity,
-          user_id: userId
-        })
+          user_id: userId,
+        }),
       });
     } catch (error) {
-      console.error('Failed to save cart item to database:', error);
+      console.error("Failed to save cart item to database:", error);
     }
   }
 }

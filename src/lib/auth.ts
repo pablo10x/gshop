@@ -1,8 +1,8 @@
-import { supabase } from './supabase';
-import { user, session, userProfile } from './stores/authStore';
-import { goto } from '$app/navigation';
-import { ensureUserAccount } from '$lib/services/accountService';
-import { saveCartToDatabase } from '$lib/stores/cartStore';
+import { supabase } from "$lib/database/database";
+import { user, session, userProfile } from "./stores/authStore";
+import { goto } from "$app/navigation";
+import { ensureUserAccount } from "$lib/services/accountService";
+import { saveCartToDatabase } from "$lib/stores/cartStore";
 export const signIn = async (email: string, password: string) => {
   try {
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -17,19 +17,21 @@ export const signIn = async (email: string, password: string) => {
       session.set(data.session);
 
       // Get or create profile
-      const profile = await ensureUserAccount(data.user.id, data.user.user_metadata);
+      const profile = await ensureUserAccount(
+        data.user.id,
+        data.user.user_metadata,
+      );
       userProfile.set(profile);
-
 
       // Save cart items to database
       await saveCartToDatabase(data.user.id);
       // Redirect to home or intended page
-      goto('/');
+      goto("/");
     }
 
     return data;
   } catch (error) {
-    console.error('Sign in error:', error);
+    console.error("Sign in error:", error);
     throw error;
   }
 };
@@ -40,15 +42,15 @@ export const signUp = async (
   metadata?: {
     full_name?: string;
     phone?: string;
-  }
+  },
 ) => {
   try {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: metadata
-      }
+        data: metadata,
+      },
     });
 
     if (error) throw error;
@@ -56,24 +58,24 @@ export const signUp = async (
     if (data.user) {
       // Don't set user/session yet as email confirmation might be required
       await ensureUserAccount(data.user.id, metadata);
-      goto('/login?message=check-email');
+      goto("/login?message=check-email");
     }
 
     return data;
   } catch (error) {
-    console.error('Sign up error:', error);
+    console.error("Sign up error:", error);
     throw error;
   }
 };
 
-export const signInWithProvider = async (provider: 'google' | 'facebook') => {
+export const signInWithProvider = async (provider: "google" | "facebook") => {
   try {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
         // scopes: 'email profile'
-      }
+      },
     });
 
     if (error) throw error;
@@ -95,9 +97,9 @@ export const signOut = async () => {
     userProfile.set(null);
 
     // Redirect to login page
-    goto('/login');
+    goto("/login");
   } catch (error) {
-    console.error('Sign out error:', error);
+    console.error("Sign out error:", error);
     throw error;
   }
 };

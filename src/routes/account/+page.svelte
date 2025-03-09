@@ -5,7 +5,6 @@
   import { Card, Button, Label, Input } from "flowbite-svelte";
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
-  import { supabase } from "$lib/supabase";
 
   let editMode = false;
   let formData = {

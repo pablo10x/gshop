@@ -1,24 +1,26 @@
-import { createClient } from '@supabase/supabase-js';
-import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
-import type { UserProfile } from '$lib/models/userProfile';
-import postgres from 'postgres';
-import { drizzle } from 'drizzle-orm/postgres-js';
-const supabase = createClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY);
+import { createClient } from "@supabase/supabase-js";
+import {
+  PUBLIC_SUPABASE_URL,
+  PUBLIC_SUPABASE_ANON_KEY,
+} from "$env/static/public";
+import type { UserProfile } from "$lib/models/userProfile";
+import postgres from "postgres";
+import { drizzle } from "drizzle-orm/postgres-js";
+export const supabase = createClient(
+  PUBLIC_SUPABASE_URL,
+  PUBLIC_SUPABASE_ANON_KEY,
+);
 
 //drizzle setup
-const sql = postgres(PUBLIC_SUPABASE_URL, { ssl: "require" })
-export const db = drizzle(sql)
+const sql = postgres(PUBLIC_SUPABASE_URL, { ssl: "require" });
+export const db = drizzle(sql);
 //---------------------------------------------
 
-
-
-
-
-
-
-export async function createProfile(profile: Omit<UserProfile, 'id' | 'created_at' | 'updated_at'>) {
+export async function createProfile(
+  profile: Omit<UserProfile, "id" | "created_at" | "updated_at">,
+) {
   const { data, error } = await supabase
-    .from('profiles')
+    .from("profiles")
     .insert([profile])
     .select()
     .single();
@@ -32,9 +34,9 @@ export async function createProfile(profile: Omit<UserProfile, 'id' | 'created_a
 
 export async function getProfile(userId: string) {
   const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('user_id', userId)
+    .from("profiles")
+    .select("*")
+    .eq("user_id", userId)
     .single();
 
   if (error) {
@@ -44,11 +46,14 @@ export async function getProfile(userId: string) {
   return data as UserProfile;
 }
 
-export async function updateProfile(userId: string, updates: Partial<UserProfile>) {
+export async function updateProfile(
+  userId: string,
+  updates: Partial<UserProfile>,
+) {
   const { data, error } = await supabase
-    .from('profiles')
+    .from("profiles")
     .update(updates)
-    .eq('user_id', userId)
+    .eq("user_id", userId)
     .select()
     .single();
 
@@ -61,9 +66,9 @@ export async function updateProfile(userId: string, updates: Partial<UserProfile
 
 export async function deleteProfile(userId: string) {
   const { error } = await supabase
-    .from('profiles')
+    .from("profiles")
     .delete()
-    .eq('user_id', userId);
+    .eq("user_id", userId);
 
   if (error) {
     throw new Error(`Error deleting profile: ${error.message}`);
@@ -74,9 +79,9 @@ export async function deleteProfile(userId: string) {
 
 export async function listProfiles() {
   const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .order('created_at', { ascending: false });
+    .from("profiles")
+    .select("*")
+    .order("created_at", { ascending: false });
 
   if (error) {
     throw new Error(`Error listing profiles: ${error.message}`);

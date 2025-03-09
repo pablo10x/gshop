@@ -19,5 +19,5 @@ export interface CartItem {
   quantity: number;
   created_at?: string;
   updated_at?: string;
-  product?: Product;  // Joined product data
+  product?: Product; // Joined product data
 }

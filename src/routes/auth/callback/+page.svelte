@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
-  import { supabase } from "$lib/supabase";
+  import { supabase } from "$lib/database/database";
   import { user, session, userProfile } from "$lib/stores/authStore";
   import { ensureUserAccount } from "$lib/services/accountService";
   import { Spinner } from "flowbite-svelte";

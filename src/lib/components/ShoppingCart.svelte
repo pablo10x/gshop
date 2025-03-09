@@ -3,10 +3,10 @@
   import { cart, removeFromCart, itemsCount } from "$lib/stores/cartStore";
   import { isCartOpen } from "$lib/stores/ui";
   import { Button } from "flowbite-svelte";
-
+  import type { Product} from "$lib/models/product";
   function getTotalPrice() {
     return $cart
-      .reduce((sum, item) => sum + item.price * item.quantity, 0)
+      .reduce((sum, item) => sum + (item.product?.price ?? 0) * item.quantity, 0)
       .toFixed(2);
   }
 
@@ -39,7 +39,5 @@
 </div>
 
 <style>
-  :global(.cart-button) {
-    @apply p-0 border-none shadow-none;
-  }
+
 </style>
