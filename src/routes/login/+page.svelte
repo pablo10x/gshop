@@ -20,6 +20,9 @@
     error = "";
   }
 
+
+   
+
   // Phone number validation
   const validatePhone = (number: string) => {
     const cleanNumber = number.replace(/[^0-9]/g, '');
@@ -44,9 +47,9 @@
       error = "";
       
       // Validate phone number
-      if (!validatePhone(phone)) {
+      /* if (!validatePhone(phone)) {
         throw new Error("Please enter a valid 8-digit phone number");
-      }
+      } */
 
       const formattedPhone = '+216' + phone.replace(/[^0-9]/g, '');
       await signUp(email, password, { 
@@ -74,9 +77,11 @@
 </script>
 
 <AuthGuard requiredAuth={false}>
-  <div class="flex flex-col items-center justify-center min-h-screen px-6 py-8 bg-gray-50">
-    <div class="w-full bg-white rounded-lg shadow-md md:mt-0 sm:max-w-md xl:p-0">
-      <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+  <div class="flex flex-col items-center  justify-center min-h-screen px-6 py-8 bg-gray-800">
+    <div class="w-full bg-zinc-400  rounded-lg shadow-md md:mt-0 sm:max-w-md xl:p-0">
+      <!-- Blurred Background -->
+     
+      <div class="p-6 space-y-4 md:space-y-6 sm:p-8 backdrop-blur-lg ">
         <Tabs style="underline" >
           <TabItem open title="Login">
             {#if error}
@@ -138,79 +143,7 @@
             </form>
           </TabItem>
 
-          <TabItem title="Register">
-            {#if error}
-              <Alert color="red" class="mb-4" dismissable>{error}</Alert>
-            {/if}
-
-            <form class="space-y-4 md:space-y-6" on:submit|preventDefault={handleRegister}>
-              <div>
-                <Label for="register-email" class="block mb-2">Email</Label>
-                <Input
-                  type="email"
-                  name="register-email"
-                  id="register-email"
-                  bind:value={email}
-                  required
-                  disabled={loading}
-                  placeholder="name@company.com"
-                />
-              </div>
-              <div>
-                <Label for="register-password" class="block mb-2">Password</Label>
-                <Input
-                  type="password"
-                  name="register-password"
-                  id="register-password"
-                  bind:value={password}
-                  required
-                  disabled={loading}
-                  placeholder="••••••••"
-                  minlength={6}
-                />
-              </div>
-              <div>
-                <Label for="full-name" class="block mb-2">Full Name</Label>
-                <Input
-                  type="text"
-                  name="full-name"
-                  id="full-name"
-                  bind:value={fullName}
-                  required
-                  disabled={loading}
-                  placeholder="John Doe"
-                />
-              </div>
-              <div>
-                <Label for="phone" class="block mb-2">Phone Number</Label>
-                <div class="flex">
-                  <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">
-                    +216
-                  </span>
-                  <Input
-                    type="tel"
-                    name="phone"
-                    id="phone"
-                    bind:value={phone}
-                    required
-                    disabled={loading}
-                    class="rounded-l-none"
-                    placeholder="12345678"
-                    pattern="[0-9]{8}"
-                    title="Please enter a valid 8-digit phone number"
-                  />
-                </div>
-              </div>
-              <Button type="submit" class="w-full" disabled={loading}>
-                {#if loading}
-                  <Spinner class="mr-3" size="4" color="white" />
-                  Creating account...
-                {:else}
-                  Create account
-                {/if}
-              </Button>
-            </form>
-          </TabItem>
+         
         </Tabs>
       </div>
     </div>

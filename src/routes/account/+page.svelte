@@ -1,15 +1,12 @@
 <script lang="ts">
-  import { user, userProfile } from "$lib/stores/authStore";
+  import { user } from "$lib/stores/authStore";
   import { signOut } from "$lib/auth";
   import { Card, Button, Label, Input } from "flowbite-svelte";
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
 
   let editMode = false;
-  let formData = {
-    address: $userProfile?.address || "",
-    phone: $userProfile?.phone || "",
-  };
+  
 
  
 
@@ -41,7 +38,7 @@
         <div class="space-y-4">
          
 
-          <div>
+      <!--     <div>
             <p class="font-semibold">Address</p>
             <p>{$userProfile?.address || "Not set"}</p>
           </div>
@@ -49,7 +46,7 @@
           <div>
             <p class="font-semibold">Phone</p>
             <p>{$userProfile?.phone || "Not set"}</p>
-          </div>
+          </div> -->
 
           <div class="flex gap-4">
             <Button color="primary" on:click={() => (editMode = true)}>

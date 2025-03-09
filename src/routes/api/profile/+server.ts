@@ -1,80 +1,68 @@
-import { json } from "@sveltejs/kit";
+import { json } from '@sveltejs/kit';
+import { db, supabase } from '$lib/server/database/database';
+import { user } from '$lib/schema/schema';
+import { eq } from 'drizzle-orm';
 import type { RequestHandler } from "@sveltejs/kit";
-import { supabase } from "$lib/database/database";
-
-export const GET: RequestHandler = async ({ request }) => {
-  try {
-    const user_id = request.headers.get("user-id");
-    if (!user_id) {
-      return json({ message: "User ID is required" }, { status: 400 });
-    }
-
-    const { data: profile, error } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("user_id", user_id)
-      .single();
-
-    if (error) {
-      console.error("Profile fetch error:", error);
-      return json({ message: error.message }, { status: 404 });
-    }
-
-    return json(profile);
-  } catch (error) {
-    console.error("Profile check error:", error);
-    return json({ message: "Server error" }, { status: 500 });
-  }
-};
 
 export const POST: RequestHandler = async ({ request }) => {
   try {
-    const profile = await request.json();
-    const user_id = request.headers.get("user-id");
-
-    if (!user_id) {
-      return json({ message: "User ID is required" }, { status: 400 });
-    }
-
-    // Check if profile exists
-    const { data: existingProfile } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("user_id", user_id)
-      .single();
-
-    if (existingProfile) {
-      // Update existing profile
-      const { data: updatedProfile, error: updateError } = await supabase
-        .from("profiles")
-        .update({ ...profile })
-        .eq("user_id", user_id)
-        .select()
-        .single();
-
-      if (updateError) {
-        console.error("Profile update error:", updateError);
-        return json({ message: updateError.message }, { status: 500 });
-      }
-
-      return json(updatedProfile);
+    const userData = await request.json();
+    // Use direct db operations instead of query builder
+    const existingUser = await db.select().from(user).where(eq(user.id, userData.id));
+    
+    if (existingUser.length > 0) {
+      const updated = await db.update(user)
+        .set({
+          email: userData.email,
+          phone: userData.phone || '',
+        })
+        .where(eq(user.id, userData.id))
+        .returning();
+      return json(updated[0]);
     } else {
-      // Create new profile
-      const { data: newProfile, error: insertError } = await supabase
-        .from("profiles")
-        .insert([{ ...profile, user_id }])
-        .select()
-        .single();
-
-      if (insertError) {
-        console.error("Profile creation error:", insertError);
-        return json({ message: insertError.message }, { status: 500 });
-      }
-
-      return json(newProfile);
+      const created = await db.insert(user)
+        .values({
+          id: userData.id,
+          email: userData.email,
+          phone: userData.phone || '',
+          address: '',
+        })
+        .returning();
+      return json(created[0]);
     }
-  } catch (error) {
-    console.error("Profile operation error:", error);
-    return json({ message: "Server error" }, { status: 500 });
+  } catch (error: any) {
+    console.error('Profile creation error:', error);
+    return json({ error: error.message }, { status: 500 });
+  }
+};
+
+export const GET: RequestHandler = async ({ request }) => {
+  try {
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader) {
+      return json({ error: 'No authorization header' }, { status: 401 });
+    }
+
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user: authUser }, error } = await supabase.auth.getUser(token);
+    
+    if (error || !authUser) {
+      return json({ error: 'Invalid token' }, { status: 401 });
+    }
+
+    // Use direct db operations instead of query builder
+    const profile = await db.select()
+      .from(user)
+      .where(eq(user.id, authUser.id))
+      .limit(1);
+
+    if (!profile.length) {
+      return json({ error: 'Profile not found' }, { status: 404 });
+    }
+
+    return json(profile[0]);
+  } catch (error: any) {
+    console.error('Profile fetch error:', error);
+    return json({ error: error.message }, { status: 500 });
   }
 };

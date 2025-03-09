@@ -1,5 +1,5 @@
 <script>
-	import { initializeAuthStore } from "$lib/stores/authStore";
+	import { initializeAuth } from "$lib/auth";
 	import { browser } from '$app/environment'
   import { onMount } from 'svelte';
 	
@@ -11,7 +11,7 @@
   import CartModal from "$lib/components/CartModal.svelte";
 
   onMount(() => {
-    initializeAuthStore();
+    initializeAuth();
   });
 </script>
 

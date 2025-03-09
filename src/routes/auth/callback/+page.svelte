@@ -1,13 +1,26 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
-  import { supabase } from "$lib/database/database";
+  import { supabase } from "$lib/auth";
   import { user, session, userProfile } from "$lib/stores/authStore";
-  import { ensureUserAccount } from "$lib/services/accountService";
   import { Spinner } from "flowbite-svelte";
 
   let error = '';
   let loading = true;
+
+  async function createUserProfile(userData: any) {
+    const response = await fetch('/api/profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(userData)
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to create profile');
+    }
+    
+    return response.json();
+  }
 
   onMount(async () => {
     try {
@@ -20,22 +33,23 @@
         user.set(data.session.user);
         session.set(data.session);
         
-        // Ensure profile exists
-        /* const profile = await ensureUserAccount(
-          data.session.user.id,
-          data.session.user.user_metadata
-        ); */
-        //userProfile.set(profile);
+        // Create or update profile
+        const profile = await createUserProfile({
+          id: data.session.user.id,
+          email: data.session.user.email,
+          phone: data.session.user.user_metadata?.phone || '',
+        });
+        
+        userProfile.set(profile);
 
         // Redirect to home or intended path
         const intended = localStorage.getItem('intended_path') || '/';
         localStorage.removeItem('intended_path');
         goto(intended);
       } else {
-        error = 'No session found';
-        goto('/login?error=auth-failed');
+        throw new Error('No session found');
       }
-    } catch (e : any) {
+    } catch (e: any) {
       console.error('Auth callback error:', e);
       error = e.message;
       goto('/login?error=auth-failed');

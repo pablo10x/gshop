@@ -1,16 +1,26 @@
 <script lang="ts">
-  import { user } from "$lib/stores/authStore";
+  import { user, session } from "$lib/stores/authStore";
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
+  import { Spinner } from "flowbite-svelte";
 
   export let requiredAuth = true;
+  let loading = true;
 
   onMount(() => {
-    const unsubscribe = user.subscribe((currentUser) => {
-      if (requiredAuth && !currentUser) {
-        goto("/login");
-      } else if (!requiredAuth && currentUser) {
-        goto("/account");
+    const unsubscribe = session.subscribe((currentSession) => {
+      if (currentSession === null) {
+        // Session is definitely not available
+        if (requiredAuth) {
+          goto("/login");
+        }
+        loading = false;
+      } else if (currentSession) {
+        // Session is available
+        if (!requiredAuth) {
+          goto("/account");
+        }
+        loading = false;
       }
     });
 
@@ -18,4 +28,10 @@
   });
 </script>
 
-<slot />
+{#if loading}
+  <div class="flex justify-center items-center min-h-screen">
+    <Spinner size="xl" />
+  </div>
+{:else}
+  <slot />
+{/if}

@@ -1,8 +1,82 @@
-import { supabase } from "$lib/database/database";
 import { user, session, userProfile } from "./stores/authStore";
 import { goto } from "$app/navigation";
-import { ensureUserAccount } from "$lib/services/accountService";
-import { saveCartToDatabase } from "$lib/stores/cartStore";
+import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from "$env/static/public";
+import { createClient } from "@supabase/supabase-js";
+import type { Provider } from "@supabase/supabase-js";
+
+// Client-side Supabase instance
+export const supabase = createClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    storageKey: 'auth-storage'
+  }
+});
+
+
+
+// Add profile caching
+let profileCache: Record<string, { data: any; timestamp: number }> = {};
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+async function fetchProfile(userId: string, token: string) {
+  const now = Date.now();
+  const cached = profileCache[userId];
+
+  // Return cached profile if it exists and isn't expired
+  if (cached && (now - cached.timestamp) < CACHE_DURATION) {
+    return cached.data;
+  }
+
+  const response = await fetch('/api/profile', {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  });
+
+  if (response.ok) {
+    const profile = await response.json();
+    // Cache the new profile
+    profileCache[userId] = {
+      data: profile,
+      timestamp: now
+    };
+    return profile;
+  }
+  
+  throw new Error('Failed to fetch profile');
+}
+
+
+// Helper function to update stores with session data
+async function updateAuthStores(sessionData: any, forceProfileRefresh = false) {
+  if (!sessionData?.user) return;
+
+  user.set(sessionData.user);
+  session.set(sessionData.session);
+
+  try {
+    const profile = forceProfileRefresh ? 
+      await fetchProfile(sessionData.user.id, sessionData.session.access_token) :
+      (profileCache[sessionData.user.id]?.data || 
+       await fetchProfile(sessionData.user.id, sessionData.session.access_token));
+    
+    userProfile.set(profile);
+  } catch (error) {
+    console.error('Failed to fetch profile:', error);
+  }
+}
+
+// Helper function to clear auth stores// Helper function to clear auth stores and cache
+function clearAuthStores() {
+  user.set(null);
+  session.set(null);
+  userProfile.set(null);
+  profileCache = {}; // Clear cache on logout
+}
+
 export const signIn = async (email: string, password: string) => {
   try {
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -11,24 +85,8 @@ export const signIn = async (email: string, password: string) => {
     });
 
     if (error) throw error;
-
-    if (data.user) {
-      user.set(data.user);
-      session.set(data.session);
-
-      // Get or create profile
-      const profile = await ensureUserAccount(
-        data.user.id,
-        data.user.user_metadata,
-      );
-      userProfile.set(profile);
-
-      // Save cart items to database
-      await saveCartToDatabase(data.user.id);
-      // Redirect to home or intended page
-      goto("/");
-    }
-
+    await updateAuthStores(data);
+    goto("/");
     return data;
   } catch (error) {
     console.error("Sign in error:", error);
@@ -42,25 +100,16 @@ export const signUp = async (
   metadata?: {
     full_name?: string;
     phone?: string;
-  },
+  }
 ) => {
   try {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: metadata,
-      },
+      options: { data: metadata }
     });
 
     if (error) throw error;
-
-    if (data.user) {
-      // Don't set user/session yet as email confirmation might be required
-      await ensureUserAccount(data.user.id, metadata);
-      goto("/login?message=check-email");
-    }
-
     return data;
   } catch (error) {
     console.error("Sign up error:", error);
@@ -68,14 +117,13 @@ export const signUp = async (
   }
 };
 
-export const signInWithProvider = async (provider: "google" | "facebook") => {
+export const signInWithProvider = async (provider: Provider) => {
   try {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-        // scopes: 'email profile'
-      },
+        redirectTo: `${window.location.origin}/auth/callback`
+      }
     });
 
     if (error) throw error;
@@ -91,15 +139,32 @@ export const signOut = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
 
-    // Clear all auth stores
-    user.set(null);
-    session.set(null);
-    userProfile.set(null);
-
-    // Redirect to login page
+    clearAuthStores();
     goto("/login");
   } catch (error) {
     console.error("Sign out error:", error);
     throw error;
   }
 };
+
+export async function initializeAuth() {
+  const { data: { session: initialSession } } = await supabase.auth.getSession();
+
+  if (initialSession) {
+    await updateAuthStores({ user: initialSession.user, session: initialSession });
+  }
+
+  // Listen for auth changes
+  supabase.auth.onAuthStateChange(async (event, currentSession) => {
+    if (currentSession) {
+      // Force profile refresh on certain events
+      const forceRefresh = ['SIGNED_IN', 'USER_UPDATED'].includes(event);
+      await updateAuthStores(
+        { user: currentSession.user, session: currentSession },
+        forceRefresh
+      );
+    } else {
+      clearAuthStores();
+    }
+  });
+}
