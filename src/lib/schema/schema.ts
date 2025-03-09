@@ -31,9 +31,7 @@ export const collections = pgTable("collections", {
 
 export const products = pgTable("products", {
   id: serial("id").primaryKey(),
-  collectionId: integer("collection_id")
-    .references(() => collections.id, { onDelete: "cascade" })
-    .notNull(),
+  
   name: text("name").notNull(),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
   oldPrice: decimal("old_price", { precision: 10, scale: 2 }),
@@ -96,10 +94,10 @@ export const orderItems = pgTable("order_items", {
 
 // Relations
 export const productsRelations = relations(products, ({ one, many }) => ({
-  collection: one(collections, {
+  /* collection: one(collections, {
     fields: [products.collectionId],
     references: [collections.id],
-  }),
+  }), */
   images: many(productImages),
   cartItems: many(cartItems),
   orderItems: many(orderItems),
