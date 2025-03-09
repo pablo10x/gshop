@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from '@sveltejs/kit';
 import { supabase } from '$lib/supabase';
-import type { CartItem } from '$lib/types/product';
+import type { CartItem } from '$lib/models/product';
 
 export const GET: RequestHandler = async ({ params }) => {
   const { userId } = params;

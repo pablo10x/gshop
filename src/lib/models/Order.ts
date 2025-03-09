@@ -1,4 +1,4 @@
-import type { Product } from '$lib/types/product';
+import type { Product } from '$lib/models/product';
 
 export interface Order {
   id: string;

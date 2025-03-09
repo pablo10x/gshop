@@ -1,5 +1,5 @@
 import { writable, derived, get } from "svelte/store";
-import type { CartItem } from "$lib/types/product";
+import type { CartItem } from "$lib/models/product";
 import { browser } from '$app/environment';
 
 export const cart = writable<CartItem[]>([], (set) => {

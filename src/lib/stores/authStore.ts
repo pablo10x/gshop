@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 import type { User, Session } from '@supabase/supabase-js';
-import type { UserProfile } from '$lib/types/userProfile';
+import type { UserProfile } from '$lib/models/userProfile';
 import { supabase } from '$lib/supabase';
 import { getUserProfile } from '$lib/services/profileService';
 import { ensureUserAccount, validateSession } from '$lib/services/accountService';

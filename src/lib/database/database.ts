@@ -1,8 +1,20 @@
 import { createClient } from '@supabase/supabase-js';
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
-import type { UserProfile } from '$lib/types/userProfile';
-
+import type { UserProfile } from '$lib/models/userProfile';
+import postgres from 'postgres';
+import { drizzle } from 'drizzle-orm/postgres-js';
 const supabase = createClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY);
+
+//drizzle setup
+const sql = postgres(PUBLIC_SUPABASE_URL, { ssl: "require" })
+export const db = drizzle(sql)
+//---------------------------------------------
+
+
+
+
+
+
 
 export async function createProfile(profile: Omit<UserProfile, 'id' | 'created_at' | 'updated_at'>) {
   const { data, error } = await supabase

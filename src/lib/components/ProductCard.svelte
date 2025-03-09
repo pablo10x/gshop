@@ -1,7 +1,7 @@
 <script lang="ts">
   import { cart, addToCart, removeFromCart } from "$lib/stores/cartStore";
   import { ShoppingBagSolid } from 'flowbite-svelte-icons';
-  import type { Product, CartItem } from '$lib/types/product';
+  import type { Product, CartItem } from '$lib/models/product';
   import { get } from 'svelte/store';
   import { user } from '$lib/stores/authStore';
 

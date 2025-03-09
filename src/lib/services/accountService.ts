@@ -1,4 +1,4 @@
-import type { UserProfile } from '$lib/types/userProfile';
+import type { UserProfile } from '$lib/models/userProfile';
 import { supabase } from '$lib/supabase';
 
 export async function validateSession() {

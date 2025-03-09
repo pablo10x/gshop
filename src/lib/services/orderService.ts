@@ -1,5 +1,5 @@
 import { supabase } from '../supabase';
-import type { Order } from '$lib/types/Order';
+import type { Order } from '$lib/models/Order';
 
 export const getOrders = async (userId: string) => {
   const { data, error } = await supabase

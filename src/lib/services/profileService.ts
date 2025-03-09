@@ -1,4 +1,4 @@
-import type { UserProfile } from '$lib/types/userProfile';
+import type { UserProfile } from '$lib/models/userProfile';
 
 export const getUserProfile = async (userId: string) => {
   const response = await fetch('/api/profile');
