@@ -9,6 +9,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
+import type CategoryManagement from "$lib/components/CategoryManagement.svelte";
 
 // Users table
 export const user = pgTable("user", {
@@ -22,18 +23,17 @@ export const user = pgTable("user", {
 });
 
 // Products schema
-export const collections = pgTable("collections", {
+export const categories = pgTable("categories", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
-  time: timestamp("time").defaultNow(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 export const products = pgTable("products", {
   id: serial("id").primaryKey(),
-  collectionId: integer("collection_id")
-    .references(() => collections.id, { onDelete: "cascade" }),
+  categoryId: integer("categoryId")
+    .references(() => categories.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
   oldPrice: decimal("old_price", { precision: 10, scale: 2 }),
@@ -96,9 +96,9 @@ export const orderItems = pgTable("order_items", {
 
 // Relations
 export const productsRelations = relations(products, ({ one, many }) => ({
-  collection: one(collections, {
-    fields: [products.collectionId],
-    references: [collections.id],
+  collection: one(categories, {
+    fields: [products.categoryId],
+    references: [categories.id],
   }),
   images: many(productImages),
   cartItems: many(cartItems),

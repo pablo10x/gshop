@@ -30,6 +30,7 @@ export const handle: Handle = async ({ event, resolve }) => {
         profile = result[0] || null;
 
         if (profile) {
+          console.log("profile", profile)
           profileCache.set(session.user.id, profile);
         }
       }

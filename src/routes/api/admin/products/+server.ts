@@ -31,7 +31,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
       isNew: productData.isNew || false,
       onSale: productData.onSale || false,
       oldPrice: productData.oldPrice || null,
-      rating: productData.rating || 0
+      rating: productData.rating || 0,
+      categoryId: productData.categoryId
     }).returning();
 
     return json(result[0]);
