@@ -85,6 +85,12 @@ export const signIn = async (email: string, password: string) => {
     });
 
     if (error) throw error;
+
+    // Store session in cookies
+    const { session } = data;
+    document.cookie = `sb-access-token=${session?.access_token}; path=/`;
+    document.cookie = `sb-refresh-token=${session?.refresh_token}; path=/`;
+
     await updateAuthStores(data);
     goto("/");
     return data;
@@ -138,6 +144,10 @@ export const signOut = async () => {
   try {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
+
+    // Clear cookies
+    document.cookie = 'sb-access-token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    document.cookie = 'sb-refresh-token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 
     clearAuthStores();
     goto("/login");

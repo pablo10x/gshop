@@ -2,6 +2,9 @@
 // for information about these interfaces
 declare global {
   namespace App {
+    interface Locals {
+      session?: Session;
+    }
     // interface Error {}
     // interface Locals {}
     // interface PageData {}

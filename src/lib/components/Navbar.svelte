@@ -67,3 +67,4 @@
     </div>
   </div>
 </nav>
+<a href="/admin" aria-label="Admin Page"> admin</a>

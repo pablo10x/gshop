@@ -1,12 +1,20 @@
 import type { Handle } from '@sveltejs/kit';
+import { supabase } from '$lib/server/database/database';
 
 export const handle: Handle = async ({ event, resolve }) => {
-  // Check if route is admin and verify admin status
-  if (event.url.pathname.startsWith('/admin')) {
-    /* const session = await event.locals.getSession();
-    if (!session?.user?.email?.endsWith('@yourdomain.com')) {
-      return new Response('Unauthorized', { status: 401 });
-    } */
+  // Get the token from cookie
+  const accessToken = event.cookies.get('sb-access-token');
+  const refreshToken = event.cookies.get('sb-refresh-token');
+
+  if (accessToken && refreshToken) {
+    const { data: { session } } = await supabase.auth.setSession({
+      access_token: accessToken,
+      refresh_token: refreshToken
+    });
+
+    if (session) {
+      event.locals.session = session;
+    }
   }
 
   return resolve(event);
