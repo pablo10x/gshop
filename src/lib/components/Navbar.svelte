@@ -67,4 +67,4 @@
     </div>
   </div>
 </nav>
-<a href="/admin" aria-label="Admin Page"> admin</a>
+<a class="font-roboto uppercase bg-slate-300 rounded-md px-2 py-1" href="/admin" aria-label="Admin Page"> admin</a>

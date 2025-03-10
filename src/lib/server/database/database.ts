@@ -1,6 +1,7 @@
 // Server-side code only
 import { DATABASE_URL } from '$env/static/private';
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
+import {profileCache} from '$lib/server/cache';
 import { user } from "$lib/schema/schema";
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
@@ -27,7 +28,18 @@ if (!DATABASE_URL) {
 
 
 
+export async function setUserRole(userId: string, role: 'admin' | 'user') {
+  const result = await db
+    .update(user)
+    .set({ role })
+    .where(eq(user.id, userId))
+    .returning();
 
+  // Clear cache when role changes
+  profileCache.clear();
+
+  return result[0];
+}
 
 export async function ccreateOrUpdateProfile(userData: {
   id: string;
@@ -35,8 +47,6 @@ export async function ccreateOrUpdateProfile(userData: {
   phone?: string;
   metadata?: Record<string, any>;
 }) {
-
-
   try {
     const existingProfile = await db
       .select()
@@ -45,7 +55,6 @@ export async function ccreateOrUpdateProfile(userData: {
       .limit(1);
 
     if (existingProfile.length > 0) {
-      // Update existing profile
       const result = await db
         .update(user)
         .set({
@@ -54,9 +63,11 @@ export async function ccreateOrUpdateProfile(userData: {
         })
         .where(eq(user.id, userData.id))
         .returning();
+
+      // Invalidate cache after update
+      profileCache.invalidate(userData.id);
       return result[0];
     } else {
-      // Create new profile
       const result = await db
         .insert(user)
         .values({
@@ -66,6 +77,9 @@ export async function ccreateOrUpdateProfile(userData: {
           address: "",
         })
         .returning();
+
+      // Cache new profile
+      profileCache.set(userData.id, result[0]);
       return result[0];
     }
   } catch (error) {

@@ -14,6 +14,7 @@ import { relations } from "drizzle-orm";
 export const user = pgTable("user", {
   id: uuid("id").primaryKey(), // Changed to uuid to match Supabase auth.users
   email: text("email").unique().notNull(),
+  role: text("role").notNull().default("user"),
   address: text("address").notNull().default(""),
   phone: text("phone").notNull().default(""),
   createdAt: timestamp("created_at").defaultNow(),
@@ -31,7 +32,8 @@ export const collections = pgTable("collections", {
 
 export const products = pgTable("products", {
   id: serial("id").primaryKey(),
-  
+  collectionId: integer("collection_id")
+    .references(() => collections.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
   oldPrice: decimal("old_price", { precision: 10, scale: 2 }),
@@ -94,10 +96,10 @@ export const orderItems = pgTable("order_items", {
 
 // Relations
 export const productsRelations = relations(products, ({ one, many }) => ({
-  /* collection: one(collections, {
+  collection: one(collections, {
     fields: [products.collectionId],
     references: [collections.id],
-  }), */
+  }),
   images: many(productImages),
   cartItems: many(cartItems),
   orderItems: many(orderItems),

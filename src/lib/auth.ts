@@ -1,5 +1,6 @@
-import { user, session, userProfile } from "./stores/authStore";
+import { user, session, userProfile , isAdmin} from "./stores/authStore";
 import { goto } from "$app/navigation";
+import { get } from 'svelte/store';
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from "$env/static/public";
 import { createClient } from "@supabase/supabase-js";
 import type { Provider } from "@supabase/supabase-js";
@@ -177,4 +178,19 @@ export async function initializeAuth() {
       clearAuthStores();
     }
   });
+}
+
+export function checkRole(requiredRole: 'admin' | 'user' = 'user') {
+  const profile = get(userProfile);
+  if (!profile) return false;
+
+  if (requiredRole === 'admin') {
+    return profile.role === 'admin';
+  }
+
+  return true;
+}
+
+export function requireAdmin() {
+  return get(isAdmin);
 }

@@ -1,16 +1,18 @@
-// See https://svelte.dev/docs/kit/types#app.d.ts
-// for information about these interfaces
+import type { Session } from '@supabase/supabase-js';
+import type { InferSelectModel } from 'drizzle-orm';
+import type { user } from '$lib/schema/schema';
+
 declare global {
   namespace App {
     interface Locals {
       session?: Session;
+      profile?: InferSelectModel<typeof user> | null;
     }
-    // interface Error {}
-    // interface Locals {}
-    // interface PageData {}
-    // interface PageState {}
-    // interface Platform {}
+    interface PageData {
+      session?: Session;
+      profile?: InferSelectModel<typeof user>;
+    }
   }
 }
 
-export {};
+export { };
