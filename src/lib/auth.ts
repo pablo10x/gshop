@@ -1,10 +1,10 @@
-import { user, session, userProfile , isAdmin} from "./stores/authStore";
+import { user, session, userProfile, isAdmin } from "./stores/authStore";
 import { goto } from "$app/navigation";
 import { get } from 'svelte/store';
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from "$env/static/public";
 import { createClient } from "@supabase/supabase-js";
 import type { Provider } from "@supabase/supabase-js";
-
+import { redirect } from '@sveltejs/kit'
 // Client-side Supabase instance
 export const supabase = createClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
   auth: {
@@ -46,7 +46,7 @@ async function fetchProfile(userId: string, token: string) {
     };
     return profile;
   }
-  
+
   throw new Error('Failed to fetch profile');
 }
 
@@ -59,11 +59,11 @@ async function updateAuthStores(sessionData: any, forceProfileRefresh = false) {
   session.set(sessionData.session);
 
   try {
-    const profile = forceProfileRefresh ? 
+    const profile = forceProfileRefresh ?
       await fetchProfile(sessionData.user.id, sessionData.session.access_token) :
-      (profileCache[sessionData.user.id]?.data || 
-       await fetchProfile(sessionData.user.id, sessionData.session.access_token));
-    
+      (profileCache[sessionData.user.id]?.data ||
+        await fetchProfile(sessionData.user.id, sessionData.session.access_token));
+
     userProfile.set(profile);
   } catch (error) {
     console.error('Failed to fetch profile:', error);
@@ -124,12 +124,33 @@ export const signUp = async (
   }
 };
 
-export const signInWithProvider = async (provider: Provider) => {
+/* export const signInWithProvider = async (provider: Provider) => {
   try {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
         redirectTo: `${window.location.origin}/auth/callback`
+      }
+    });
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error(`${provider} sign in error:`, error);
+    throw error;
+  }
+}; */
+
+export const signInWithProvider = async (provider: Provider) => {
+  try {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent'
+        }
       }
     });
 

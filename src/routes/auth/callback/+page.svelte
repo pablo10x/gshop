@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { supabase } from '$lib/auth';
@@ -43,4 +43,4 @@
   <div class="flex items-center justify-center min-h-screen">
     <p class="text-red-500">Authentication failed: {error}</p>
   </div>
-{/if}
+{/if} -->
