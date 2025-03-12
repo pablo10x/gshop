@@ -1,6 +1,6 @@
 <script>
   import { page } from "$app/stores";
-  import { user } from "$lib/stores/authStore";
+ 
   import {
     Navbar,
     NavBrand,
@@ -16,9 +16,23 @@
   import SearchProduct from "$lib/components/SearchProduct.svelte";
   import Cart from "$lib/components/ShoppingCart.svelte";
 
-  $: userAvatar = $user?.user_metadata?.avatar_url || null;
 
-  $: userFullName = $user?.user_metadata?.full_name || null;
+
+ let { data } = $props()
+  let { user } = $derived(data)
+// Derive user information using $derived
+  let isLoggedIn = $derived(!!user);
+  let userAvatar = $derived(user?.user_metadata?.avatar_url ?? null);
+  let userFullName = $derived(user?.user_metadata?.full_name ?? null);
+  let email = $derived(user?.email ?? null);
+
+$effect(() => {
+    console.log('Navbar user:', { email, isLoggedIn });
+  });
+
+  /* const userAvatar = data.user?.user_metadata?.avatar_url || null;
+
+  const userFullName = data.user?.user_metadata?.full_name || null; */
 </script>
 
 <div class="bg-zinc-700 text-gray-400 text-center items-center font-roboto font-bold py-2">Welcome to our store</div>
@@ -44,11 +58,11 @@
         <div class="flex items-center">
           <div class="hidden sm:block mr-2">
             <span class="text-sm md:text-base font-normal font-roboto">
-              {#if userFullName}
+             <!--  {#if isLoggedIn}
                 <span>Hello, {userFullName.split(' ')[0]}</span>
               {:else}
                 <span>Log in</span>
-              {/if}
+              {/if} -->
             </span>
           </div>
           <Avatar  
@@ -56,7 +70,7 @@
             rounded 
             size="sm"
             class="w-8 h-8 md:w-10 md:h-10 cursor-pointer hover:ring-2 hover:ring-primary-500 transition-all"
-            href={$user ? "/account" : "/login"}
+            href={data.user ? "/account" : "/login"}
           /> 
         </div>
         

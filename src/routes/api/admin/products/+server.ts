@@ -17,9 +17,7 @@ export const GET: RequestHandler = async () => {
 export const POST: RequestHandler = async ({ request, locals }) => {
 
 
-  if (locals.profile?.role !== 'admin') {
-    return json({ error: 'Unauthorized' }, { status: 401 });
-  }
+ 
   try {
     const productData = await request.json();
 
@@ -43,9 +41,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 };
 
 export const PUT: RequestHandler = async ({ request, locals }) => {
-  if (locals.profile?.role !== 'admin') {
-    return json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  
   try {
     const productData = await request.json();
     const { id, createdAt, updatedAt, ...updateData } = productData;
@@ -76,9 +72,7 @@ export const PUT: RequestHandler = async ({ request, locals }) => {
 };
 
 export const DELETE: RequestHandler = async ({ request, locals }) => {
-  if (locals.profile?.role !== 'admin') {
-    return json({ error: 'Unauthorized' }, { status: 401 });
-  }
+ 
   try {
     const { id } = await request.json();
     const result = await db.delete(products)

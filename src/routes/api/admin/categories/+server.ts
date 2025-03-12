@@ -15,9 +15,7 @@ export const GET: RequestHandler = async () => {
 };
 
 export const POST: RequestHandler = async ({ request, locals }) => {
-  if (locals.profile?.role !== 'admin') {
-    return json({ error: 'Unauthorized' }, { status: 401 });
-  }
+ 
   try {
     const categoryData = await request.json();
     const result = await db.insert(categories).values({
@@ -32,9 +30,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 };
 
 export const PUT: RequestHandler = async ({ request, locals }) => {
-  if (locals.profile?.role !== 'admin') {
-    return json({ error: 'Unauthorized' }, { status: 401 });
-  }
+
   try {
     const categoryData = await request.json();
     const { id, ...updateData } = categoryData;
@@ -65,9 +61,7 @@ export const PUT: RequestHandler = async ({ request, locals }) => {
 };
 
 export const DELETE: RequestHandler = async ({ request, locals }) => {
-  if (locals.profile?.role !== 'admin') {
-    return json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  
   try {
     const { id } = await request.json();
     const result = await db.delete(categories)

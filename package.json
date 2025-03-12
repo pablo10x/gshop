@@ -42,6 +42,7 @@
     "@supabase/postgrest-js": "^1.19.2",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.49.1",
+    "@tailwindcss/vite": "^4.0.13",
     "@types/pg": "^8.11.11",
     "dotenv": "^16.4.7",
     "drizzle-kit": "^0.30.5",

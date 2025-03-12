@@ -1,4 +1,4 @@
-import { redirect } from '@sveltejs/kit';
+/* import { redirect } from '@sveltejs/kit';
 import { db, supabase } from '$lib/server/database/database';
 import { user } from '$lib/schema/schema';
 import { eq } from 'drizzle-orm';
@@ -34,4 +34,4 @@ export const load = async ({ cookies, url, request }) => {
     profile: userProfile[0],
     session: session
   };
-};
+}; */

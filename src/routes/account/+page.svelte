@@ -1,6 +1,5 @@
 <script lang="ts">
   import { user } from "$lib/stores/authStore";
-  import { signOut } from "$lib/auth";
   import { Card, Button, Label, Input } from "flowbite-svelte";
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
@@ -10,18 +9,12 @@
 
  
 
-  async function handleSignOut() {
-    try {
-      await signOut();
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
-  }
+
 
   onMount(() => {
-    if (!$user) {
+    /* if (!$user) {
       goto("/login");
-    }
+    } */
   });
 </script>
 
@@ -52,7 +45,7 @@
             <Button color="primary" on:click={() => (editMode = true)}>
               Edit Profile
             </Button>
-            <Button color="red" on:click={handleSignOut}>Sign Out</Button>
+            <Button color="red" formaction="/logout">Sign Out</Button>
           </div>
         </div>
       {/if}

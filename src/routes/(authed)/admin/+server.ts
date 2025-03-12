@@ -1,4 +1,4 @@
-import { json } from '@sveltejs/kit';
+/* import { json } from '@sveltejs/kit';
 import { db } from '$lib/server/database/database';
 import { products } from '$lib/schema/schema';
 import { eq } from 'drizzle-orm';
@@ -45,4 +45,4 @@ export const DELETE: RequestHandler = async ({ request }) => {
   } catch (error) {
     return json({ error: 'Failed to delete product' }, { status: 500 });
   }
-};
+}; */
