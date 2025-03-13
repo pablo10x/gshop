@@ -11,7 +11,6 @@ export const actions: Actions = {
   login: async ({ request, locals: { supabase, user } }) => {
     
     if (user) {
-      console.log('Already logged in')
       redirect(303, '/')
       
     }
@@ -24,8 +23,46 @@ export const actions: Actions = {
       console.error(error)
       redirect(303, '/auth/error')
     } else {
-      console.log('Login successful')
       redirect(303, '/')
     }
   },
+  googleLogin: async ({ request, url, locals: { supabase, user } }) => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${url.origin}/auth/callback`,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
+      },
+    })
+
+    if (error) {
+      console.error('OAuth error:', error.message)
+      throw redirect(303, '/auth/error')
+    }
+
+    throw redirect(303, data.url)
+  },
+  facebookLogin: async ({ request, url, locals: { supabase, user } }) => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'facebook',
+      options: {
+        redirectTo: `${url.origin}/auth/callback`,
+        queryParams: {
+          display: 'popup',
+          auth_type: 'rerequest',
+          scope: 'email,public_profile',
+        },
+      },
+    })
+
+    if (error) {
+      console.error('Facebook OAuth error:', error.message)
+      throw redirect(303, '/auth/error')
+    }
+
+    throw redirect(303, data.url)
+  }
 }

@@ -41,7 +41,7 @@ export async function addToCart(item: CartItem) {
   });
 
   // Save cart item to backend if user is logged in
-  if (item.user_id) {
+ /*  if (item.user_id) {
     try {
       await fetch(`/api/cart/${item.user_id}`, {
         method: "POST",
@@ -53,7 +53,7 @@ export async function addToCart(item: CartItem) {
     } catch (error) {
       console.error("Failed to save cart item to database:", error);
     }
-  }
+  } */
 }
 
 export async function removeFromCart(id: number, user_id?: string) {
@@ -62,7 +62,7 @@ export async function removeFromCart(id: number, user_id?: string) {
   );
 
   // Remove cart item from backend if user is logged in
-  if (user_id) {
+/*   if (user_id) {
     await fetch(`/api/cart/${user_id}`, {
       method: "DELETE",
       headers: {
@@ -70,7 +70,7 @@ export async function removeFromCart(id: number, user_id?: string) {
       },
       body: JSON.stringify({ id }),
     });
-  }
+  } */
 }
 
 export async function loadCart(userId: string) {

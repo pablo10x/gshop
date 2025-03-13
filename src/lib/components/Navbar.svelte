@@ -26,9 +26,7 @@
   let userFullName = $derived(user?.user_metadata?.full_name ?? null);
   let email = $derived(user?.email ?? null);
 
-$effect(() => {
-    console.log('Navbar user:', { email, isLoggedIn });
-  });
+
 
   /* const userAvatar = data.user?.user_metadata?.avatar_url || null;
 
@@ -58,11 +56,13 @@ $effect(() => {
         <div class="flex items-center">
           <div class="hidden sm:block mr-2">
             <span class="text-sm md:text-base font-normal font-roboto">
-             <!--  {#if isLoggedIn}
-                <span>Hello, {userFullName.split(' ')[0]}</span>
+              {#if isLoggedIn && userFullName}
+                <span>Hello, {userFullName?.split(' ')[0]}</span>
               {:else}
-                <span>Log in</span>
-              {/if} -->
+               {#if !isLoggedIn}
+                <span class="font-thin font-rubik">Log in</span>
+                {/if}
+              {/if}
             </span>
           </div>
           <Avatar  

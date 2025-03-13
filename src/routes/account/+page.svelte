@@ -3,7 +3,7 @@
   import { Card, Button, Label, Input } from "flowbite-svelte";
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
-
+  import { notifications } from '$lib/stores/notificationStore';
   let editMode = false;
   
 
@@ -18,7 +18,7 @@
   });
 </script>
 
-<div class="container mx-auto p-4">
+<form class="container mx-auto p-4" method="POST">
   <Card class="max-w-2xl mx-auto">
     <h2 class="text-2xl font-bold mb-4">Account Details</h2>
 
@@ -45,10 +45,10 @@
             <Button color="primary" on:click={() => (editMode = true)}>
               Edit Profile
             </Button>
-            <Button color="red" formaction="/logout">Sign Out</Button>
+            <Button type="submit"  color="red" formaction="?/logout" >Sign Out</Button>
           </div>
         </div>
       {/if}
     
   </Card>
-</div>
+</form>
