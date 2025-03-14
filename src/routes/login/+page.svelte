@@ -15,6 +15,7 @@
   import type { PageProps } from "./$types";
   import { fade, fly } from 'svelte/transition';
   import { quintOut } from 'svelte/easing';
+  import {enhance} from '$app/forms'
   let { data }: PageProps = $props();
 
   let activeTab = "login";
@@ -33,6 +34,22 @@
     const cleanNumber = number.replace(/[^0-9]/g, "");
     return cleanNumber.length === 8;
   };
+  function handleResponse({ result }) {
+    // If errors were returned, update the errors object to display them
+   console.log(result)
+    
+  }
+
+  let formEl : HtmlFormElement;
+
+
+  onMount(async () => {
+    if(formEl){
+      enhance(formEl, {
+        onResult: handleResponse
+      })
+    }
+  });
 
   function validateInput(event: any) {
     if (!event.target.value.trim()) {
@@ -41,7 +58,13 @@
       event.target.setCustomValidity("");
     }
   }
-</script>
+if (result.errors) {
+      error = result.errors;
+      loading = false;
+    } else {
+      // If no errors were returned, redirect to the home page
+      window.location.href = "/";
+    } </script>
 
 <div
   class="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-900 to-zinc-700 px-6"
@@ -174,7 +197,7 @@
               in:fly={{ y: 15, duration: 300, delay:50, easing: quintOut }}
               out:fade={{ duration: 100 }}
             >
-          <form method="POST" action="?/signup" class="space-y-6 gap-y-6">
+          <form bind:this={formEl} method="POST" action="?/signup" class="space-y-6 gap-y-6">
             <div class="grid grid-cols-1 gap-4">
               <div class="space-y-6">
                 <FloatingLabelInput
@@ -184,8 +207,7 @@
                   bind:value={fullName}
                   on:invalid={validateInput}
                   on:input={validateInput}
-                  required
-                  maxlength={12}
+                  maxlength={20}
                   disabled={loading}
                   placeholder="Full Name"
                   class="bg-black border-gray-600 placeholder-gray-800 text-slate-800  font-roboto  focus:border-lime-500  focus:ring-lime-100  focus:shadow-lg"
@@ -199,7 +221,6 @@
                   name="email"
                   id="email"
                   bind:value={email}
-                  required
                   disabled={loading}
                   placeholder="email.com"
                   class="bg-white border-gray-600 placeholder-gray-400 text-slate-800 font-rubik  focus:border-lime-500  focus:ring-lime-100  focus:shadow-lg"
@@ -213,7 +234,6 @@
                   name="password"
                   id="password"
                   bind:value={password}
-                  required
                   disabled={loading}
                   placeholder="********"
                   class="bg-white/20 border-gray-600 placeholder-gray-400 text-slate-800 font-rubik  focus:border-lime-500  focus:ring-lime-100  focus:shadow-lg"
@@ -228,7 +248,7 @@
                   name="etat"
                   id="etat"
                   bind:value={etat}
-                  required
+                  
                   disabled={loading}
                   class="bg-zinc-500 backdrop-blur-lg border-gray-600 text-slate-200 font-rubik  focus:border-sky-500  focus:ring-lime-100  focus:shadow-lg"
                 >
@@ -253,7 +273,7 @@
                   name="villeAdr"
                   id="villeAdr"
                   bind:value={villeAdr}
-                  required
+                  
                   disabled={loading || !etat}
                   class="bg-zinc-500 border-gray-600  text-slate-100 font-rubik  focus:border-sky-500  focus:ring-lime-100  focus:shadow-lg"
                 >
@@ -286,7 +306,7 @@
                     name="phone"
                     id="phone"
                     bind:value={phone}
-                    required
+                    
                     disabled={loading}
                     placeholder="12 345 678"
                     maxlength={8}

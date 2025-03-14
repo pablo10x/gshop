@@ -2,8 +2,27 @@ import { redirect } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types';
 import { ccreateOrUpdateProfile } from '$lib/server/database/database';
 import { mediumtext } from 'drizzle-orm/mysql-core';
+import { z } from 'zod'
 
 
+
+
+
+const formsheet_signup = z.object({
+  email: z.string().email({ message: "Email invalide" }),
+  password: z.string().min(8, { message: "Mot de passe doit contenir au moins 8 caractères" }).max(50, { message: "mote de pass trop long" }),
+  fullname: z.string().min(3, { message: "Nom complet doit contenir au moins 3 caractères" }).max(20, { message: "Nom comolete doit contenir max de 20 caracteres " }),
+  phone: z.string().min(8, { message: "Numero de telephone doit contenir au moins 8 caractères" }).max(8),
+  etat: z.string().min(3, { message: "Etat doit contenir au moins 3 caractères" }).max(20),
+  villeAdr: z.string().min(3, { message: "Ville doit contenir au moins 3 caractères" }).max(20),
+})
+
+const formsheet_login = z.object({
+
+  email: z.string().email({ message: "Email invalide" }),
+  password: z.string().min(8, { message: "Mot de passe doit contenir au moins 8 caractères" }).max(50, { message: "mote de pass trop long" }),
+
+})
 
 /**
  * Server-side actions for authentication
@@ -29,6 +48,16 @@ export const actions: Actions = {
 
 
 
+    const data = Object.fromEntries(formData.entries())
+    const result = formsheet_signup.safeParse(data)
+    //   console.log(result.error?.errors)
+    if (!result.success) {
+
+      return {
+        errors: result.error.errors,
+        values: data
+      }
+    }
 
     const { error, data: { session } } = await supabase.auth.signUp({ email, password, options: { data: { fullName: fullName, c: "sd" } } });
     if (error) {
