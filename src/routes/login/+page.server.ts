@@ -13,12 +13,12 @@ export const actions: Actions = {
    * Handles user signup
    * @TODO Implement proper signup logic
   */
-  
+
 
   signup: async ({ request, locals: { supabase } }) => {
-    
+
     const formData = await request.formData()
-    
+
 
     const email = formData.get('email') as string
     const password = formData.get('password') as string
@@ -26,8 +26,8 @@ export const actions: Actions = {
     const phone = formData.get('phone') as string
     const etat = formData.get('etat') as string
     const villeAdr = formData.get('villeAdr') as string
-      
-    
+
+
 
 
     const { error, data: { session } } = await supabase.auth.signUp({ email, password, options: { data: { fullName: fullName, c: "sd" } } });
@@ -62,14 +62,14 @@ export const actions: Actions = {
     const formData = await request.formData()
     const email = formData.get('email') as string
     const password = formData.get('password') as string
-    
+
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) {
       console.error('Login error:', error.message)
       throw redirect(303, '/auth/error')
     }
-    
-    throw redirect(303, '/auth/callback')
+
+    throw redirect(303, '/')
   },
 
   /**
@@ -102,7 +102,7 @@ export const actions: Actions = {
    */
   facebookLogin: async ({ url, locals: { supabase } }) => {
     const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'facebook', 
+      provider: 'facebook',
       options: {
         redirectTo: `${url.origin}/auth/callback`,
         queryParams: {
