@@ -15,12 +15,16 @@ import type CategoryManagement from "$lib/components/CategoryManagement.svelte";
 export const user = pgTable("user", {
   id: uuid("id").primaryKey(), // Changed to uuid to match Supabase auth.users
   email: text("email").unique().notNull(),
+  name: text("name").notNull().default(""),
   role: text("role").notNull().default("user"),
-  address: text("address").notNull().default(""),
+  etatAdr: text("etatAdr").notNull().default(""),
+  villeAdr: text("villeAdr").notNull().default(""),
   phone: text("phone").notNull().default(""),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
+
+
 
 // Products schema
 export const categories = pgTable("categories", {

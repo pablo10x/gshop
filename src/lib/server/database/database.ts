@@ -43,10 +43,14 @@ export async function setUserRole(userId: string, role: 'admin' | 'user') {
 
 export async function ccreateOrUpdateProfile(userData: {
   id: string;
+  fullName: string;
   email: string;
-  phone?: string;
-  metadata?: Record<string, any>;
+  phone: string;
+  etatAdr: string;
+  villeAdr: string;
+ 
 }) {
+  
   try {
     const existingProfile = await db
       .select()
@@ -72,9 +76,11 @@ export async function ccreateOrUpdateProfile(userData: {
         .insert(user)
         .values({
           id: userData.id,
+          name: userData.fullName,
           email: userData.email,
           phone: userData.phone || "",
-          address: "",
+          etatAdr: userData.etatAdr || "",
+          villeAdr: userData.villeAdr,
         })
         .returning();
 

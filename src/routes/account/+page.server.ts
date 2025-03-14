@@ -8,6 +8,6 @@ export const actions: Actions = {
     const { error } = await supabase.auth.signOut()
     if (error) {
         
-    }
+    }else redirect(303, '/')
   },
 }
