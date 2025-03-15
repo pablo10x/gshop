@@ -24,7 +24,7 @@ const formsheet_login = z.object({
   password: z.string().min(8, { message: "Mot de passe doit contenir au moins 8 caractères" }).max(50, { message: "mote de pass trop long" }),
 
 })
-export const load : ServerLoad = (async () => {
+export const load = (async () => {
   // Initialize multiple forms
   const loginForm = await superValidate(zod(formsheet_login));
   const register = await superValidate(zod(formsheet_signup));
@@ -33,7 +33,7 @@ export const load : ServerLoad = (async () => {
     loginForm,
     register
   };
-}) 
+}) satisfies PageServerLoad;
 /**
  * Server-side actions for authentication
  */

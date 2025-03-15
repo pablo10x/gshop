@@ -12,14 +12,25 @@
   } from "flowbite-svelte";
   import { InfoCircleSolid } from "flowbite-svelte-icons";
   import type { PageProps } from "./$types";
+  import type { PageData } from './$types';
   import { fade, fly } from "svelte/transition";
   import { quintOut } from "svelte/easing";
   import { superForm } from "sveltekit-superforms/client";
 
-  let { data } = $props();
+   import { page } from '$app/stores';
+   let { data } = $page;
+const { form: loginForm, errors: loginErrors, enhance: loginEnhance, message: loginMessage } = 
+    superForm(data.loginForm, {
+      taintedMessage: null
+    });
 
-   const  {loginForm} =  data;
-  const { form, errors, enhance, message } = superForm(loginForm);
+  const { form: registerForm, errors: registerErrors, enhance: registerEnhance, message: registerMessage } = 
+    superForm(data.register, {
+      taintedMessage: null
+    });
+
+    console.log(data)
+   
 
   let activeTab = "login";
   let email = $state("");
