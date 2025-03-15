@@ -33,6 +33,21 @@
   let loading = $state(false);
   let error = $state(false);
 
+
+
+  //form valid
+
+
+
+const { form } = superForm(data.registerForm);
+
+
+
+$form.fullname;
+
+
+
+
   const validatePhone = (number: string) => {
     const cleanNumber = number.replace(/[^0-9]/g, "");
     return cleanNumber.length === 8;
@@ -188,7 +203,7 @@
                     type="text"
                     name="fullname"
                     id="fullname"
-                    bind:value={fullName}
+                    bind:value={$form.fullname}
                     on:invalid={validateInput}
                     on:input={validateInput}
                     maxlength={20}
@@ -204,7 +219,7 @@
                     type="email"
                     name="email"
                     id="email"
-                    bind:value={email}
+                    bind:value={$form.email}
                     disabled={loading}
                     placeholder="email.com"
                     class="bg-white border-gray-600 placeholder-gray-400 text-slate-800 font-rubik  focus:border-lime-500  focus:ring-lime-100  focus:shadow-lg"
@@ -217,7 +232,7 @@
                     type="password"
                     name="password"
                     id="password"
-                    bind:value={password}
+                    bind:value={$form.password}
                     disabled={loading}
                     placeholder="********"
                     class="bg-white/20 border-gray-600 placeholder-gray-400 text-slate-800 font-rubik  focus:border-lime-500  focus:ring-lime-100  focus:shadow-lg"

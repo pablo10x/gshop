@@ -1,7 +1,10 @@
 import { redirect } from '@sveltejs/kit'
 import type { ServerLoad } from '@sveltejs/kit';
-import type { Actions, PageServerLoad } from './$types';
 import { createOrUpdateProfile } from '$lib/server/database/database';
+
+
+
+import type { Actions, PageServerLoad } from './$types';
 import { superValidate, fail, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
@@ -9,31 +12,63 @@ import { z } from 'zod';
 
 
 
+
+interface Delegation {
+  name: string;
+  cities: string[];
+}
+
+interface Governorate {
+  name: string;
+  delegations: Delegation[];
+}
+
+
 const formsheet_signup = z.object({
   email: z.string().email({ message: "Email invalide" }),
-  password: z.string().min(8, { message: "Mot de passe doit contenir au moins 8 caractères" }).max(50, { message: "mote de pass trop long" }),
-  fullname: z.string().min(3, { message: "Nom complet doit contenir au moins 3 caractères" }).max(20, { message: "Nom complete doit contenir max de 20 caracteres " }),
-  phone: z.string().min(8, { message: "Numero de telephone doit contenir au moins 8 caractères" }).max(8),
-  etat: z.string().min(3, { message: "Etat doit contenir au moins 3 caractères" }).max(20),
-  villeAdr: z.string().min(3, { message: "Ville doit contenir au moins 3 caractères" }).max(20),
-})
+  password: z.string().min(8, { message: "Mot de passe doit contenir au moins 8 caractères" }).max(50),
+  fullname: z.string().min(3, { message: "Nom complet doit contenir au moins 3 caractères" }).max(20),
+  phone: z.string().regex(/^\d{8}$/, { message: "Numéro de téléphone doit contenir exactement 8 chiffres" }),
+  etat: z.string().min(3, { message: "Etat doit contenir au moins 3 caractères" }),
+  villeAdr: z.string().min(3, { message: "Ville doit contenir au moins 3 caractères" })
+});
 
 const formsheet_login = z.object({
-
   email: z.string().email({ message: "Email invalide" }),
-  password: z.string().min(8, { message: "Mot de passe doit contenir au moins 8 caractères" }).max(50, { message: "mote de pass trop long" }),
+  password: z.string().min(8, { message: "Mot de passe doit contenir au moins 8 caractères" })
+});
 
-})
-export const load: PageServerLoad = (async () => {
-  // Initialize multiple forms
+export const load = (async () => {
+
+
+  const response = await fetch(
+    'https://raw.githubusercontent.com/Benyoubilel/TUNISIAN-CITIES-JSON/main/cities.json'
+  );
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch cities');
+  }
+
+  const jsonData = await response.json();
+
+  // Map to simpler structure
+  const governorates = jsonData.Tunisia.governorates.map((gov: Governorate) => ({
+    name: gov.name,
+    delegations: gov.delegations.map(del => del.name)
+  }));
+
+
+
+
   const loginForm = await superValidate(zod(formsheet_login));
   const registerForm = await superValidate(zod(formsheet_signup));
 
   return {
     loginForm,
-    registerForm
+    registerForm,
+    governorates: governorates,
   };
-})
+}) satisfies PageServerLoad;
 /**
  * Server-side actions for authentication
  */
@@ -46,20 +81,23 @@ export const actions: Actions = {
 
   signup: async ({ request, locals: { supabase } }) => {
 
-    const form = await superValidate(request, zod(formsheet_signup));
+    const form = await superValidate( zod(formsheet_signup));
 
+    
     if (!form.valid) {
       console.log("form invalide")
       return fail(400, { form });
     }
 
-
-    const { error, data: { session } } = await supabase.auth.signUp({ email, password, options: { data: { fullName: "", } });
+    const { email, password, fullname, phone, etat, villeAdr } = form.data;
+    const { error, data: { session } } = await supabase.auth.signUp({ email, password, options: { data: { fullname, phone, etat, villeAdr } } });
+    
+    
     if (error) {
       console.error('Signup error:', error.message)
       throw redirect(303, '/login')
     }
-    const { email, password, fullname, phone, etat, villeAdr } = form.data;
+    
 
 
 
@@ -76,9 +114,7 @@ export const actions: Actions = {
     }
 
 
-    return {
-      form
-    }
+    return message(form, 'Logged in successfully!');
   },
 
   /**
