@@ -14,7 +14,7 @@ interface Governorate {
   delegations: Delegation[];
 }
 
-export const load: PageLoad = async ({ fetch }) => {
+export const load: PageLoad = async ({ fetch, data }) => {
   const response = await fetch(
     'https://raw.githubusercontent.com/Benyoubilel/TUNISIAN-CITIES-JSON/main/cities.json'
   );
@@ -32,6 +32,8 @@ export const load: PageLoad = async ({ fetch }) => {
   }));
 
   return {
-    governorates : governorates
+    ...data,
+    governorates: governorates,
+
   };
 };

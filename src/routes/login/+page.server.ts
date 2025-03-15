@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit'
 import type { ServerLoad } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { ccreateOrUpdateProfile } from '$lib/server/database/database';
+import { createOrUpdateProfile } from '$lib/server/database/database';
 import { superValidate, fail, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
@@ -24,16 +24,16 @@ const formsheet_login = z.object({
   password: z.string().min(8, { message: "Mot de passe doit contenir au moins 8 caractères" }).max(50, { message: "mote de pass trop long" }),
 
 })
-export const load = (async () => {
+export const load: PageServerLoad = (async () => {
   // Initialize multiple forms
   const loginForm = await superValidate(zod(formsheet_login));
-  const register = await superValidate(zod(formsheet_signup));
+  const registerForm = await superValidate(zod(formsheet_signup));
 
   return {
     loginForm,
-    register
+    registerForm
   };
-}) satisfies PageServerLoad;
+})
 /**
  * Server-side actions for authentication
  */
@@ -46,42 +46,39 @@ export const actions: Actions = {
 
   signup: async ({ request, locals: { supabase } }) => {
 
-    const formData = await request.formData()
-
-
-    const email = formData.get('email') as string
-    const password = formData.get('password') as string
-    const fullName = formData.get('fullname') as string
-    const phone = formData.get('phone') as string
-    const etat = formData.get('etat') as string
-    const villeAdr = formData.get('villeAdr') as string
-
-
     const form = await superValidate(request, zod(formsheet_signup));
 
     if (!form.valid) {
+      console.log("form invalide")
       return fail(400, { form });
     }
-  
 
-    const { error, data: { session } } = await supabase.auth.signUp({ email, password, options: { data: { fullName: fullName, c: "sd" } } });
+
+    const { error, data: { session } } = await supabase.auth.signUp({ email, password, options: { data: { fullName: "", } });
     if (error) {
       console.error('Signup error:', error.message)
       throw redirect(303, '/login')
     }
+    const { email, password, fullname, phone, etat, villeAdr } = form.data;
 
-    //create profile
-    ccreateOrUpdateProfile({
-      id: session?.user.id as string,
-      fullName: fullName,
-      email: email,
-      phone: phone,
-      etatAdr: etat,
-      villeAdr: villeAdr
-    })
 
-    throw redirect(303, '/')
-    return message(form, 'Profile updated!');
+
+
+    if (session?.user?.id) {
+      createOrUpdateProfile({
+        id: session.user.id,
+        fullName: fullname,
+        email,
+        phone,
+        etatAdr: etat,
+        villeAdr
+      });
+    }
+
+
+    return {
+      form
+    }
   },
 
   /**

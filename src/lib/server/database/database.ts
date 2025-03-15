@@ -1,7 +1,7 @@
 // Server-side code only
 import { DATABASE_URL } from '$env/static/private';
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
-import {profileCache} from '$lib/server/cache';
+import { profileCache } from '$lib/server/cache';
 import { user } from "$lib/schema/schema";
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
@@ -41,16 +41,16 @@ export async function setUserRole(userId: string, role: 'admin' | 'user') {
   return result[0];
 }
 
-export async function ccreateOrUpdateProfile(userData: {
+export async function createOrUpdateProfile(userData: {
   id: string;
   fullName: string;
   email: string;
   phone: string;
   etatAdr: string;
   villeAdr: string;
- 
+
 }) {
-  
+
   try {
     const existingProfile = await db
       .select()

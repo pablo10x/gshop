@@ -17,19 +17,8 @@
   import { quintOut } from "svelte/easing";
   import { superForm } from "sveltekit-superforms/client";
 
-   import { page } from '$app/stores';
-   let { data } = $page;
-const { form: loginForm, errors: loginErrors, enhance: loginEnhance, message: loginMessage } = 
-    superForm(data.loginForm, {
-      taintedMessage: null
-    });
-
-  const { form: registerForm, errors: registerErrors, enhance: registerEnhance, message: registerMessage } = 
-    superForm(data.register, {
-      taintedMessage: null
-    });
-
-    console.log(data)
+  const { data } = $props();
+  console.log(data.registerForm);
    
 
   let activeTab = "login";
