@@ -21,7 +21,6 @@
   import { superForm } from "sveltekit-superforms/client";
   import { writable } from "svelte/store";
   import { notifications } from "$lib/stores/notificationStore";
-
   // Types
   interface LoginForm {
     email: string;
@@ -29,7 +28,7 @@
   }
 
   // Page data
-  const { data } = $props();
+  const { data} = $props();
 
   // Form state
   const {
@@ -38,13 +37,18 @@
     constraints: registerForm_constraints,
     message: registerForm_message,
     enhance,
-  } = superForm(data.registerForm);
+    delayed,
+  } = superForm(data.registerForm, {
+    delayMs: 500,
+    timeoutMs: 5000,
+  });
   let activeTab = writable("login");
 
+
+
+
   // Registration form fields
-  let email = $state("");
-  let password = $state("");
-  let fullName = $state("");
+
   let phone = $state("");
   let etat = $state("");
   let villeAdr = $state("");
@@ -66,19 +70,28 @@
 </script>
 
 <div
-  class=" min-h-screen flex items-center justify-center 
-  bg-gradient-to-r from-zinc-400 via-white to-teal-300
+  class=" absolute inset-0 min-h-screen flex items-center justify-center
+  bg-gradient-to-r from-zinc-400 via-slate-500 to-sky-300
   bg-[size:500%] animate-gradient-move px-4"
 >
   <div class="w-full md:w-1/2 lg:w-1/1 animate-fadeIn">
     <div
       class=" bg-zinc-600/70 backdrop-blur-lg rounded-2xl shadow-sm drop-shadow-sm shadow-sky-200 px-5 space-y-6 py-6 transition-all duration-300 ease-in-out"
     >
-      <h1
-        class="backdrop-brightness-95 backdrop-blur-lg rounded-lg text-3xl font-bold text-center text-zinc-200 p-6 mb-8 space-x-2"
-      >
-        Bienvenue
-      </h1>
+      <div class="flex flex-col items-center justify-center">
+        <h1
+          class="backdrop-brightness-95 backdrop-blur-lg rounded-lg text-3xl font-bold text-center text-zinc-200 p-6 mb-8 space-x-2"
+        >
+         {$registerForm_message}
+         {#if $delayed}Loading{:else}bienvenue{/if} 
+        
+         {#if $registerForm_message} <Alert color="green" class="mb-4 animate-fadeIn" dismissable
+                >{$registerForm_message}</Alert
+              > {/if}
+           {#if $delayed} <Spinner size={6} color="green" /> {/if}
+        </h1>
+       
+      </div>
 
       <Tabs
         tabStyle="underline"
@@ -205,7 +218,11 @@
           </div></TabItem
         >
 
-        <TabItem title="CREER UN COMPTE" value="register" class="text-white  bg-white rounded-md hover:shadow-md hover:shadow-white/50 animate-fadeIn">
+        <TabItem
+          title="CREER UN COMPTE"
+          value="register"
+          class="text-white  bg-white rounded-md hover:shadow-md hover:shadow-white/50 animate-fadeIn"
+        >
           <div
             in:fly={{ y: 15, duration: 300, delay: 50, easing: quintOut }}
             out:fade={{ duration: 100 }}
@@ -227,16 +244,22 @@
                     id="fullname"
                     bind:value={$form.fullname}
                     maxlength={20}
-                    disabled={loading}
+                    disabled={$delayed}
                     placeholder="FullName"
                     class="bg-black border-green-800 placeholder-gray-800 text-slate-800  font-roboto  focus:border-lime-500  focus:ring-lime-100  focus:shadow-lg"
                     >Nom et prénom</FloatingLabelInput
                   >
                   {#if $registerForm_errors.fullname}
-                    <Helper color="red" class="flex flex-row gap-x-2 animate-fadeIn">
+                    <Helper
+                      color="red"
+                      class="flex flex-row gap-x-2 animate-fadeIn"
+                    >
                       <span class="font-bold">!</span>
-                      <div class="text-red-500 font-roboto font-bold underline underline-offset-4 ">{$registerForm_errors.fullname}</div>
-  
+                      <div
+                        class="text-red-500 font-roboto font-bold underline underline-offset-4"
+                      >
+                        {$registerForm_errors.fullname}
+                      </div>
                     </Helper>
                   {/if}
                 </div>
@@ -248,16 +271,22 @@
                     id="email"
                     color={$registerForm_errors.email ? "red" : "base"}
                     bind:value={$form.email}
-                    disabled={loading}
+                    disabled={$delayed}
                     placeholder="email.com"
                     class="bg-white border-gray-600 placeholder-gray-400 text-slate-800 font-rubik  focus:border-lime-500  focus:ring-lime-100  focus:shadow-lg"
                     >Email</FloatingLabelInput
                   >
                   {#if $registerForm_errors.email}
-                    <Helper color="red" class="flex flex-row gap-x-2 animate-fadeIn">
+                    <Helper
+                      color="red"
+                      class="flex flex-row gap-x-2 animate-fadeIn"
+                    >
                       <span class="font-bold">!</span>
-                      <div class="text-red-500 font-roboto font-bold underline underline-offset-4 ">{$registerForm_errors.email}</div>
-  
+                      <div
+                        class="text-red-500 font-roboto font-bold underline underline-offset-4"
+                      >
+                        {$registerForm_errors.email}
+                      </div>
                     </Helper>
                   {/if}
                 </div>
@@ -269,16 +298,22 @@
                     id="password"
                     bind:value={$form.password}
                     color={$registerForm_errors.password ? "red" : "base"}
-                    disabled={loading}
+                    disabled={$delayed}
                     placeholder="********"
                     class="bg-white/20 border-gray-600 placeholder-gray-400 text-slate-800 font-rubik  focus:border-lime-500  focus:ring-lime-100  focus:shadow-lg"
                     >Mot de passe</FloatingLabelInput
                   >
-                   {#if $registerForm_errors.password}
-                    <Helper color="red" class="flex flex-row gap-x-2 animate-fadeIn">
+                  {#if $registerForm_errors.password}
+                    <Helper
+                      color="red"
+                      class="flex flex-row gap-x-2 animate-fadeIn"
+                    >
                       <span class="font-bold">!</span>
-                      <div class="text-red-500 font-roboto font-bold underline underline-offset-4 ">{$registerForm_errors.password}</div>
-  
+                      <div
+                        class="text-red-500 font-roboto font-bold underline underline-offset-4"
+                      >
+                        {$registerForm_errors.password}
+                      </div>
                     </Helper>
                   {/if}
                 </div>
@@ -293,7 +328,7 @@
                     name="etat"
                     id="etat"
                     bind:value={etat}
-                    disabled={loading}
+                    disabled={$delayed}
                     class="bg-zinc-200 backdrop-blur-lg border-gray-200 text-slate-800 font-rubik  focus:border-sky-500  focus:ring-lime-100  focus:shadow-lg"
                   >
                     {#each data.governorates as delegation}
@@ -306,10 +341,16 @@
                     {/each}
                   </Select>
                   {#if $registerForm_errors.etat}
-                    <Helper color="red" class="flex flex-row gap-x-2 animate-fadeIn">
+                    <Helper
+                      color="red"
+                      class="flex flex-row gap-x-2 animate-fadeIn"
+                    >
                       <span class="font-bold">!</span>
-                      <div class="text-red-500 font-roboto font-bold underline underline-offset-4 ">{$registerForm_errors.etat}</div>
-  
+                      <div
+                        class="text-red-500 font-roboto font-bold underline underline-offset-4"
+                      >
+                        {$registerForm_errors.etat}
+                      </div>
                     </Helper>
                   {/if}
                 </div>
@@ -324,7 +365,7 @@
                     name="villeAdr"
                     id="villeAdr"
                     bind:value={villeAdr}
-                    disabled={loading || !etat}
+                    disabled={$delayed || !etat}
                     class="bg-zinc-500 border-gray-600  text-slate-100 font-rubik  focus:border-sky-500  focus:ring-lime-100  focus:shadow-lg"
                   >
                     {#if etat}
@@ -337,10 +378,16 @@
                     {/if}
                   </Select>
                   {#if $registerForm_errors.villeAdr}
-                    <Helper color="red" class="flex flex-row gap-x-2 animate-fadeIn">
+                    <Helper
+                      color="red"
+                      class="flex flex-row gap-x-2 animate-fadeIn"
+                    >
                       <span class="font-bold">!</span>
-                      <div class="text-red-500 font-roboto font-bold underline underline-offset-4 ">{$registerForm_errors.villeAdr}</div>
-  
+                      <div
+                        class="text-red-500 font-roboto font-bold underline underline-offset-4"
+                      >
+                        {$registerForm_errors.villeAdr}
+                      </div>
                     </Helper>
                   {/if}
                 </div>
@@ -365,17 +412,23 @@
                       name="phone"
                       id="phone"
                       bind:value={$form.phone}
-                      disabled={loading}
+                      disabled={$delayed}
                       placeholder="12 345 678"
                       maxlength={8}
                       class="bg-white/20 border-gray-600 placeholder-gray-400 text-slate-800 font-rubik  focus:border-lime-500 underline focus:ring-lime-100 pl-24"
                     />
                   </div>
                   {#if $registerForm_errors.phone}
-                    <Helper color="red" class="flex flex-row gap-x-2 animate-fadeIn">
+                    <Helper
+                      color="red"
+                      class="flex flex-row gap-x-2 animate-fadeIn"
+                    >
                       <span class="font-bold">!</span>
-                      <div class="text-red-500 font-roboto font-bold underline underline-offset-4 ">{$registerForm_errors.phone}</div>
-  
+                      <div
+                        class="text-red-500 font-roboto font-bold underline underline-offset-4"
+                      >
+                        {$registerForm_errors.phone}
+                      </div>
                     </Helper>
                   {/if}
                   {#if phone && !validatePhone(phone)}
@@ -392,9 +445,9 @@
               <Button
                 type="submit"
                 class="w-full bg-zinc-800 hover:bg-lime-700 transition-all duration-200 mt-6 hover:text-black"
-                disabled={loading}
+                disabled={$delayed}
               >
-                {#if loading}
+                {#if $delayed}
                   <Spinner class="mr-3" size="4" color="gray" />
                   Registering...
                 {:else}
@@ -410,10 +463,6 @@
 </div>
 
 <style>
- 
-
- 
-
   :global(.animate-fadeIn) {
     animation: fadeIn 0.2s ease-in-out;
   }

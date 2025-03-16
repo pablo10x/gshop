@@ -47,11 +47,13 @@
     "@supabase/supabase-js": "^2.49.1",
     "@tailwindcss/vite": "^4.0.13",
     "@types/pg": "^8.11.11",
+    "clsx": "^2.1.1",
     "dotenv": "^16.4.7",
     "drizzle-kit": "^0.30.5",
     "drizzle-orm": "^0.40.0",
     "pg": "^8.13.3",
     "postgres": "^3.4.5",
+    "svelte-motion": "^0.12.2",
     "svelte-portal": "^2.2.1",
     "sveltkit": "^1.0.1",
     "tailwindcss-patterns": "^0.1.2"

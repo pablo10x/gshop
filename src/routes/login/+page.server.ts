@@ -85,7 +85,6 @@ export const actions: Actions = {
 
     
     if (!form.valid) {
-      console.log(form.errors)
       return fail(400, { form });
     }
 
@@ -96,7 +95,9 @@ export const actions: Actions = {
      if (error) {
        console.error('Signup error:', error.message)
        redirect(303, '/login') 
-       return message(form, 'un erreur est survenue!');
+       return fail(400, {
+         message: 'un erreur est survenue!', 
+       });
      } else {
        redirect(303, '/')
     }

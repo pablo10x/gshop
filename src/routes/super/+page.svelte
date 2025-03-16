@@ -15,6 +15,7 @@
     </div>
   {/if}
 
+  <p1>Message: {$message}</p1>
   <form method="POST" use:enhance class="space-y-4 w-full max-w-md">
     <div class="space-y-2">
 
