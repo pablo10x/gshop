@@ -29,8 +29,8 @@ const formsheet_signup = z.object({
   password: z.string().min(8, { message: "Mot de passe doit contenir au moins 8 caractères" }).max(50),
   fullname: z.string().min(3, { message: "Nom complet doit contenir au moins 3 caractères" }).max(20),
   phone: z.string().regex(/^\d{8}$/, { message: "Numéro de téléphone doit contenir exactement 8 chiffres" }),
-  etat: z.string().min(3, { message: "Etat doit contenir au moins 3 caractères" }),
-  villeAdr: z.string().min(3, { message: "Ville doit contenir au moins 3 caractères" })
+  etat: z.string().min(3, { message: "Veuillez sélectionner où vous habitez" }),
+  villeAdr: z.string().min(3, { message: "Veuillez indiquer précisément où vous habitez dans cette région" })
 });
 
 const formsheet_login = z.object({
@@ -68,7 +68,7 @@ export const load = (async () => {
     registerForm,
     governorates: governorates,
   };
-}) satisfies PageServerLoad;
+}) satisfies ServerLoad;
 /**
  * Server-side actions for authentication
  */
@@ -81,28 +81,31 @@ export const actions: Actions = {
 
   signup: async ({ request, locals: { supabase } }) => {
 
-    const form = await superValidate( zod(formsheet_signup));
+    const form = await superValidate(request, zod(formsheet_signup));
 
     
     if (!form.valid) {
-      console.log("form invalide")
+      console.log(form.errors)
       return fail(400, { form });
     }
 
     const { email, password, fullname, phone, etat, villeAdr } = form.data;
-    const { error, data: { session } } = await supabase.auth.signUp({ email, password, options: { data: { fullname, phone, etat, villeAdr } } });
+    const { error, data: { session } } = await supabase.auth.signUp({ email, password, options: { data: { name: fullname, phone, etat, villeAdr } } });
     
     
-    if (error) {
-      console.error('Signup error:', error.message)
-      throw redirect(303, '/login')
+     if (error) {
+       console.error('Signup error:', error.message)
+       redirect(303, '/login') 
+       return message(form, 'un erreur est survenue!');
+     } else {
+       redirect(303, '/')
     }
-    
+     
 
 
 
 
-    if (session?.user?.id) {
+ /*    if (session?.user?.id) {
       createOrUpdateProfile({
         id: session.user.id,
         fullName: fullname,
@@ -111,10 +114,10 @@ export const actions: Actions = {
         etatAdr: etat,
         villeAdr
       });
-    }
+    } */
 
 
-    return message(form, 'Logged in successfully!');
+    return message(form, 'Inscription réussie!');
   },
 
   /**

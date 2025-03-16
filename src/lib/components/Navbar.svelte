@@ -21,7 +21,7 @@
   // Derive user information using $derived
   let isLoggedIn = $derived(!!user);
   let userAvatar = $derived(user?.user_metadata?.avatar_url ?? null);
-  let userFullName = $derived(user?.user_metadata?.fullName ?? null);
+  let userFullName = $derived(user?.user_metadata?.name ?? null);
   let email = $derived(user?.email ?? null);
 
   /* const userAvatar = data.user?.user_metadata?.avatar_url || null;
