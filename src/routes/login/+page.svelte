@@ -66,7 +66,7 @@
 </script>
 
 <div
-  class="absolute inset-0  min-h-screen flex items-center justify-center 
+  class="absolute inset-4  min-h-screen flex items-center justify-center 
   bg-gradient-to-r from-zinc-400 via-white to-teal-300
   bg-[size:500%] animate-gradient-move px-4"
 >
