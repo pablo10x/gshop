@@ -8,6 +8,7 @@ import type { Actions, PageServerLoad } from './$types';
 import { superValidate, fail, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
+import { notifications } from '$lib/stores/notificationStore'
 
 
 
@@ -38,9 +39,12 @@ const formsheet_login = z.object({
   password: z.string().min(8, { message: "Mot de passe doit contenir au moins 8 caractères" })
 });
 
-export const load = (async () => {
+export const load = (async ({ locals: { user } }) => {
 
-
+if (user) {
+    notifications.add("Vous êtes déjà connecté", "warning")
+    throw redirect(303, '/')
+  }
   const response = await fetch(
     'https://raw.githubusercontent.com/Benyoubilel/TUNISIAN-CITIES-JSON/main/cities.json'
   );
@@ -75,39 +79,40 @@ export const load = (async () => {
 export const actions: Actions = {
   /**
    * Handles user signup
-   * @TODO Implement proper signup logic
-  */
-
-
-  signup: async ({ request, locals: { supabase } }) => {
-
+   * @param request - The incoming request object
+   * @param supabase - Supabase client instance
+   * @returns Returns form validation message or redirects on success/error
+   */
+  signup: async ({ request, locals: { supabase, user } }) => {
+    if (user) {
+      throw redirect(303, '/')
+    }
     const form = await superValidate(request, zod(formsheet_signup));
 
-    
     if (!form.valid) {
       return fail(400, { form });
     }
 
     const { email, password, fullname, phone, etat, villeAdr } = form.data;
-    const { error, data: { session } } = await supabase.auth.signUp({ email, password, options: { data: { name: fullname, phone, etat, villeAdr } } });
     
-    
-     if (error) {
-       console.error('Signup error:', error.message)
-       redirect(303, '/login') 
-       return fail(400, {
-         message: 'un erreur est survenue!', 
-       });
-     } else {
-       redirect(303, '/')
+    // Attempt to create new user
+    const { error, data: { session } } = await supabase.auth.signUp({ 
+      email, 
+      password, 
+      options: { 
+        data: { name: fullname, phone, etat, villeAdr } 
+      } 
+    });
+
+    // Handle signup error
+    if (error) {
+      console.error('Signup error:', error.message);
+      return fail(400, { form });
     }
-     
 
-
-
-
- /*    if (session?.user?.id) {
-      createOrUpdateProfile({
+    // Create or update user profile if session exists
+    if (session?.user?.id) {
+      await createOrUpdateProfile({
         id: session.user.id,
         fullName: fullname,
         email,
@@ -115,8 +120,8 @@ export const actions: Actions = {
         etatAdr: etat,
         villeAdr
       });
-    } */
-
+      throw redirect(303, '/');
+    }
 
     return message(form, 'Inscription réussie!');
   },
@@ -130,18 +135,25 @@ export const actions: Actions = {
     if (user) {
       throw redirect(303, '/')
     }
-
-    const formData = await request.formData()
-    const email = formData.get('email') as string
-    const password = formData.get('password') as string
-
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) {
-      console.error('Login error:', error.message)
-      throw redirect(303, '/auth/error')
+    const form = await superValidate(request, zod(formsheet_signup));
+    if (!form.valid) {
+      return fail(400, { form });
     }
 
-    throw redirect(303, '/')
+    const { email, password } = form.data;
+
+
+
+
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+
+
+    if (error) {
+      console.error('Login error:', error.message)
+       return message(form, error.message)
+    }
+
+    return message(form, 'réussie!');
   },
 
   /**
@@ -187,7 +199,7 @@ export const actions: Actions = {
 
     if (error) {
       console.error('Facebook OAuth error:', error.message)
-      throw redirect(303, '/auth/error')
+      throw redirect(303, '/login')
     }
 
     throw redirect(303, data.url)

@@ -13,7 +13,7 @@
     Select,
     Helper,
   } from "flowbite-svelte";
-  import { InfoCircleSolid } from "flowbite-svelte-icons";
+  import { InfoCircleSolid, CloseCircleSolid } from "flowbite-svelte-icons";
   import type { PageProps } from "./$types";
   import type { PageData } from "./$types";
   import { fade, fly } from "svelte/transition";
@@ -28,7 +28,7 @@
   }
 
   // Page data
-  const { data} = $props();
+  const { data } = $props();
 
   // Form state
   const {
@@ -39,13 +39,19 @@
     enhance,
     delayed,
   } = superForm(data.registerForm, {
-    delayMs: 500,
-    timeoutMs: 5000,
+    delayMs: 1000,
+    timeoutMs: 9000,
+    onResult: ({ result }) => {
+      if (result.type === "success") {
+        console.log("Success", result);
+      } else {
+        console.log("Error", result);
+      }
+    },
   });
   let activeTab = writable("login");
 
-
-
+  let errorOccurred = writable(false);
 
   // Registration form fields
 
@@ -56,7 +62,6 @@
   // Login form state
   let emailLogin = $state<LoginForm>({ email: "", password: "" });
   let loading = $state(false);
-  let error = $state(false);
 
   /**
    * Validates phone number format
@@ -78,19 +83,21 @@
     <div
       class=" bg-zinc-600/70 backdrop-blur-lg rounded-2xl shadow-sm drop-shadow-sm shadow-sky-200 px-5 space-y-6 py-6 transition-all duration-300 ease-in-out"
     >
+      <div
+        class="absolute top-0 right-0 p-4 rounded text-[30px] text-red-400 font-roboto hover:text-lime-200 hover:animate-fadein"
+      >
+        <a href="/"><CloseCircleSolid size="xl" /></a>
+      </div>
       <div class="flex flex-col items-center justify-center">
         <h1
           class="backdrop-brightness-95 backdrop-blur-lg rounded-lg text-3xl font-bold text-center text-zinc-200 p-6 mb-8 space-x-2"
         >
-         {$registerForm_message}
-         {#if $delayed}Loading{:else}bienvenue{/if} 
-        
-         {#if $registerForm_message} <Alert color="green" class="mb-4 animate-fadeIn" dismissable
-                >{$registerForm_message}</Alert
-              > {/if}
-           {#if $delayed} <Spinner size={6} color="green" /> {/if}
+          {#if $delayed}Loading{:else}bienvenue{/if}
+
+          {#if $delayed}
+            <Spinner size={6} color="red" />
+          {/if}
         </h1>
-       
       </div>
 
       <Tabs
@@ -108,12 +115,6 @@
             in:fly={{ y: 15, duration: 300, delay: 50, easing: quintOut }}
             out:fade={{ duration: 100 }}
           >
-            {#if error}
-              <Alert color="red" class="mb-4 animate-fadeIn" dismissable
-                >{error}</Alert
-              >
-            {/if}
-
             <form use:enhance method="POST" action="?/login" class="space-y-8">
               <div class="space-y-2">
                 <FloatingLabelInput
@@ -221,7 +222,9 @@
         <TabItem
           title="CREER UN COMPTE"
           value="register"
-          class="text-white  bg-white rounded-md hover:shadow-md hover:shadow-white/50 animate-fadeIn"
+          class="text-white {$errorOccurred
+            ? 'hidden'
+            : 'block'}  bg-white rounded-md hover:shadow-md hover:shadow-white/50 animate-fadeIn"
         >
           <div
             in:fly={{ y: 15, duration: 300, delay: 50, easing: quintOut }}
@@ -458,6 +461,12 @@
           </div></TabItem
         >
       </Tabs>
+      {#if $registerForm_message}
+      {$errorOccurred = true}
+        <Alert color="red" class="mb-4 animate-fadeIn" dismissable>
+          >{$registerForm_message}</Alert
+        >
+      {/if}
     </div>
   </div>
 </div>
@@ -495,7 +504,7 @@
     }
   }
   *:global(.animate-shake) {
-    animation: shake 0.5s ease-in-out;
+    animation: shake 0.2s ease-in-out;
   }
 
   @keyframes shake {
@@ -504,10 +513,10 @@
       transform: translateX(0);
     }
     25% {
-      transform: translateX(-5px);
+      transform: translateX(-50px);
     }
     50% {
-      transform: translateX(5px);
+      transform: translateX(50px);
     }
     75% {
       transform: translateX(-5px);

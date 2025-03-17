@@ -52,14 +52,12 @@
       </div>
 
       <!-- Right section with avatar and cart -->
-      <div class="flex items-center justify-end gap-3 md:gap-4">
-        <div class="flex items-center">
+      <div class="flex items-end justify-end gap-3 md:gap-4">
+        <div class="flex items-start">
           <div class="hidden sm:block mr-2">
-            <span class="text-sm md:text-base font-normal font-roboto">
+            <span class="md:text-base font-normal font-roboto">
               {#if isLoggedIn && userFullName}
-                <span>Hello, {userFullName?.split(" ")[0]}</span>
-              {:else if !isLoggedIn}
-                <span class="font-thin font-rubik">Log in</span>
+                <span class="text-[12px] underline underline-offset-4 flex flex-row text-gray-600 " > {userFullName?.split(" ")[0]}</span>
               {/if}
             </span>
           </div>
@@ -75,7 +73,7 @@
             <Avatar
               rounded
               size="sm"
-              class="w-8 h-8 md:w-10 md:h-10 bg-slate-500 text-white cursor-pointer hover:ring-2 hover:ring-primary-500 transition-all"
+              class="w-8 h-8 md:w-10 md:h-10 {userFullName?  "bg-black": "bg-transparent"}  text-gray-600 cursor-pointer hover:ring-2 hover:ring-primary-500 transition-all"
               href={data.user ? "/account" : "/login"}
             >
               {#if userFullName}
@@ -92,7 +90,7 @@
                   .join("")
                   .toUpperCase()}
               {:else}
-                GU
+                 <Avatar></Avatar>
               {/if}
             </Avatar>
           {/if}
