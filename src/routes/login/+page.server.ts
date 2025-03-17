@@ -8,7 +8,7 @@ import type { Actions, PageServerLoad } from './$types';
 import { superValidate, fail, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
-import { notifications } from '$lib/stores/notificationStore'
+
 
 
 
@@ -41,10 +41,7 @@ const formsheet_login = z.object({
 
 export const load = (async ({ locals: { user } }) => {
 
-if (user) {
-    notifications.add("Vous êtes déjà connecté", "warning")
-    throw redirect(303, '/')
-  }
+  if (user) throw redirect(303, '/')
   const response = await fetch(
     'https://raw.githubusercontent.com/Benyoubilel/TUNISIAN-CITIES-JSON/main/cities.json'
   );
@@ -94,14 +91,14 @@ export const actions: Actions = {
     }
 
     const { email, password, fullname, phone, etat, villeAdr } = form.data;
-    
+
     // Attempt to create new user
-    const { error, data: { session } } = await supabase.auth.signUp({ 
-      email, 
-      password, 
-      options: { 
-        data: { name: fullname, phone, etat, villeAdr } 
-      } 
+    const { error, data: { session } } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { name: fullname, phone, etat, villeAdr }
+      }
     });
 
     // Handle signup error
@@ -150,7 +147,7 @@ export const actions: Actions = {
 
     if (error) {
       console.error('Login error:', error.message)
-       return message(form, error.message)
+      return message(form, error.message)
     }
 
     return message(form, 'réussie!');
