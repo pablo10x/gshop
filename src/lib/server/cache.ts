@@ -1,5 +1,5 @@
-import type { InferSelectModel } from 'drizzle-orm';
-import type { user } from '$lib/schema/schema';
+import type { InferSelectModel } from "drizzle-orm";
+import type { user } from "$lib/schema/schema";
 
 type Profile = InferSelectModel<typeof user>;
 
@@ -44,7 +44,7 @@ class ProfileCache {
   set(userId: string, profile: Profile): void {
     this.cache.set(userId, {
       data: profile,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -73,4 +73,3 @@ class ProfileCache {
  * cache user profiles.
  */
 export const profileCache = new ProfileCache();
-

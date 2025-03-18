@@ -1,5 +1,5 @@
-import { writable } from 'svelte/store';
-import type { Product } from '$lib/models/product';
+import { writable } from "svelte/store";
+import type { Product } from "$lib/models/product";
 
 export const products = writable<Product[]>([]);
 export const isLoading = writable(false);

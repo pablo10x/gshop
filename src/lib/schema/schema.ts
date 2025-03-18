@@ -24,8 +24,6 @@ export const user = pgTable("user", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-
-
 // Products schema
 export const categories = pgTable("categories", {
   id: serial("id").primaryKey(),
@@ -36,8 +34,9 @@ export const categories = pgTable("categories", {
 
 export const products = pgTable("products", {
   id: serial("id").primaryKey(),
-  categoryId: integer("categoryId")
-    .references(() => categories.id, { onDelete: "cascade" }),
+  categoryId: integer("categoryId").references(() => categories.id, {
+    onDelete: "cascade",
+  }),
   name: text("name").notNull(),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
   oldPrice: decimal("old_price", { precision: 10, scale: 2 }),

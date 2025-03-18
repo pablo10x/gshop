@@ -1,6 +1,6 @@
-import { writable } from 'svelte/store';
+import { writable } from "svelte/store";
 
-export type NotificationType = 'success' | 'error' | 'warning';
+export type NotificationType = "success" | "error" | "warning";
 
 export interface Notification {
   id: string;
@@ -13,17 +13,17 @@ function createNotificationStore() {
 
   return {
     subscribe,
-    add: (message: string, type: NotificationType = 'success') => {
+    add: (message: string, type: NotificationType = "success") => {
       const id = crypto.randomUUID();
-      update(notifications => [...notifications, { id, type, message }]);
-      
+      update((notifications) => [...notifications, { id, type, message }]);
+
       setTimeout(() => {
-        update(notifications => notifications.filter(n => n.id !== id));
+        update((notifications) => notifications.filter((n) => n.id !== id));
       }, 3000);
     },
     remove: (id: string) => {
-      update(notifications => notifications.filter(n => n.id !== id));
-    }
+      update((notifications) => notifications.filter((n) => n.id !== id));
+    },
   };
 }
 

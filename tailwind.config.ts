@@ -16,17 +16,17 @@ export default {
         kanit: ["Kanit", "sans-serif"],
       },
       animation: {
-        'gradient-move': 'gradientShift 30s ease infinite',
+        "gradient-move": "gradientShift 30s ease infinite",
       },
       keyframes: {
         gradientShift: {
-          '0%': { backgroundPosition: '0% 50%' },
-          '50%': { backgroundPosition: '100% 50%' },
-          '100%': { backgroundPosition: '0% 50%' },
+          "0%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+          "100%": { backgroundPosition: "0% 50%" },
         },
       },
       backgroundSize: {
-        '400%': '400%',
+        "400%": "400%",
       },
       patterns: {
         // Example: Stripes pattern

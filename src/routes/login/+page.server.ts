@@ -1,22 +1,20 @@
-import { redirect } from '@sveltejs/kit'
-import type { ServerLoad } from '@sveltejs/kit';
-import { createOrUpdateProfile } from '$lib/server/database/database';
+import { redirect } from "@sveltejs/kit";
+import type { ServerLoad } from "@sveltejs/kit";
+import { createOrUpdateProfile } from "$lib/server/database/database";
 
+import type { Actions, PageServerLoad } from "./$types";
+import { superValidate, fail, message } from "sveltekit-superforms";
+import { zod } from "sveltekit-superforms/adapters";
+import { z } from "zod";
 
-
-import type { Actions, PageServerLoad } from './$types';
-import { superValidate, fail, message } from 'sveltekit-superforms';
-import { zod } from 'sveltekit-superforms/adapters';
-import { z } from 'zod';
-
-
-
-
-
+import citiesData from "$lib/cities.json";
+interface City {
+  name: string;
+}
 
 interface Delegation {
   name: string;
-  cities: string[];
+  cities?: string[];
 }
 
 interface Governorate {
@@ -24,46 +22,62 @@ interface Governorate {
   delegations: Delegation[];
 }
 
+interface TunisiaData {
+  Tunisia: {
+    governorates: Governorate[];
+  };
+}
+
 
 const formsheet_signup = z.object({
   email: z.string().email({ message: "Email invalide" }),
-  password: z.string().min(8, { message: "Mot de passe doit contenir au moins 8 caractères" }).max(50),
-  fullname: z.string().min(3, { message: "Nom complet doit contenir au moins 3 caractères" }).max(20),
-  phone: z.string().regex(/^\d{8}$/, { message: "Numéro de téléphone doit contenir exactement 8 chiffres" }),
+  password: z
+    .string()
+    .min(8, { message: "Mot de passe doit contenir au moins 8 caractères" })
+    .max(50),
+  fullname: z
+    .string()
+    .min(3, { message: "Nom complet doit contenir au moins 3 caractères" })
+    .max(20),
+  phone: z.string().regex(/^\d{8}$/, {
+    message: "Numéro de téléphone doit contenir exactement 8 chiffres",
+  }),
   etat: z.string().min(3, { message: "Veuillez sélectionner où vous habitez" }),
-  villeAdr: z.string().min(3, { message: "Veuillez indiquer précisément où vous habitez dans cette région" })
+  villeAdr: z.string().min(3, {
+    message: "Veuillez indiquer précisément où vous habitez dans cette région",
+  }),
 });
 
 const formsheet_login = z.object({
   email: z.string().email({ message: "Email invalide" }),
-  password: z.string().min(8, { message: "Mot de passe doit contenir au moins 8 caractères" })
+  password: z
+    .string()
+    .min(8, { message: "Mot de passe doit contenir au moins 8 caractères" }),
 });
 
 export const load = (async ({ locals: { user } }) => {
+  // Redirect to home if the user is already logged in
+  if (user) throw redirect(303, "/");
 
-  if (user) throw redirect(303, '/')
-  const response = await fetch(
-    'https://raw.githubusercontent.com/Benyoubilel/TUNISIAN-CITIES-JSON/main/cities.json'
+ 
+
+  // Parse the JSON response
+  const jsonData = citiesData as TunisiaData;
+
+  // Map governorates to a simpler structure with name and delegations
+  // Map governorates to a simpler structure with name and delegations
+  const governorates = jsonData.Tunisia.governorates.map(
+    (gov: Governorate) => ({
+      name: gov.name,
+      delegations: gov.delegations.map((del) => del.name),
+    })
   );
 
-  if (!response.ok) {
-    throw new Error('Failed to fetch cities');
-  }
-
-  const jsonData = await response.json();
-
-  // Map to simpler structure
-  const governorates = jsonData.Tunisia.governorates.map((gov: Governorate) => ({
-    name: gov.name,
-    delegations: gov.delegations.map(del => del.name)
-  }));
-
-
-
-
+  // Validate login and register forms using zod schemas
   const loginForm = await superValidate(zod(formsheet_login));
   const registerForm = await superValidate(zod(formsheet_signup));
 
+  // Return the validated forms and simplified governorates structure
   return {
     loginForm,
     registerForm,
@@ -82,7 +96,7 @@ export const actions: Actions = {
    */
   signup: async ({ request, locals: { supabase, user } }) => {
     if (user) {
-      throw redirect(303, '/')
+      throw redirect(303, "/");
     }
     const form = await superValidate(request, zod(formsheet_signup));
 
@@ -93,17 +107,20 @@ export const actions: Actions = {
     const { email, password, fullname, phone, etat, villeAdr } = form.data;
 
     // Attempt to create new user
-    const { error, data: { session } } = await supabase.auth.signUp({
+    const {
+      error,
+      data: { session },
+    } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: { name: fullname, phone, etat, villeAdr }
-      }
+        data: { name: fullname, phone, etat, villeAdr },
+      },
     });
 
     // Handle signup error
     if (error) {
-      console.error('Signup error:', error.message);
+      console.error("Signup error:", error.message);
       return fail(400, { form });
     }
 
@@ -115,12 +132,12 @@ export const actions: Actions = {
         email,
         phone,
         etatAdr: etat,
-        villeAdr
+        villeAdr,
       });
-      throw redirect(303, '/');
+      throw redirect(303, "/");
     }
 
-    return message(form, 'Inscription réussie!');
+    return message(form, "Inscription réussie!");
   },
 
   /**
@@ -130,7 +147,7 @@ export const actions: Actions = {
   login: async ({ request, locals: { supabase, user } }) => {
     // Redirect if already logged in
     if (user) {
-      throw redirect(303, '/')
+      throw redirect(303, "/");
     }
     const form = await superValidate(request, zod(formsheet_signup));
     if (!form.valid) {
@@ -139,18 +156,17 @@ export const actions: Actions = {
 
     const { email, password } = form.data;
 
-
-
-
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
     if (error) {
-      console.error('Login error:', error.message)
-      return message(form, error.message)
+      console.error("Login error:", error.message);
+      return message(form, error.message);
     }
 
-    return message(form, 'réussie!');
+    return message(form, "réussie!");
   },
 
   /**
@@ -159,22 +175,22 @@ export const actions: Actions = {
    */
   googleLogin: async ({ url, locals: { supabase } }) => {
     const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
+      provider: "google",
       options: {
         redirectTo: `${url.origin}/auth/callback`,
         queryParams: {
-          access_type: 'offline',
-          prompt: 'consent',
+          access_type: "offline",
+          prompt: "consent",
         },
       },
-    })
+    });
 
     if (error) {
-      console.error('Google OAuth error:', error.message)
-      throw redirect(303, '/auth/error')
+      console.error("Google OAuth error:", error.message);
+      throw redirect(303, "/auth/error");
     }
 
-    throw redirect(303, data.url)
+    throw redirect(303, data.url);
   },
 
   /**
@@ -183,22 +199,22 @@ export const actions: Actions = {
    */
   facebookLogin: async ({ url, locals: { supabase } }) => {
     const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'facebook',
+      provider: "facebook",
       options: {
         redirectTo: `${url.origin}/auth/callback`,
         queryParams: {
-          display: 'popup',
-          auth_type: 'rerequest',
-          scope: 'email,public_profile',
+          display: "popup",
+          auth_type: "rerequest",
+          scope: "email,public_profile",
         },
       },
-    })
+    });
 
     if (error) {
-      console.error('Facebook OAuth error:', error.message)
-      throw redirect(303, '/login')
+      console.error("Facebook OAuth error:", error.message);
+      throw redirect(303, "/login");
     }
 
-    throw redirect(303, data.url)
-  }
-}
+    throw redirect(303, data.url);
+  },
+};

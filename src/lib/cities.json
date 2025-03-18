@@ -1,0 +1,906 @@
+{
+  "Tunisia": {
+    "governorates": [
+      {
+        "name": "Tunis",
+        "delegations": [
+          {
+            "name": "Carthage"
+          },
+          {
+            "name": "La Médina"
+          },
+          {
+            "name": "Bab Bhar"
+          },
+          {
+            "name": "Bab Souika"
+          },
+          {
+            "name": "El Omrane"
+          },
+          {
+            "name": "Omrane Supérieur"
+          },
+          {
+            "name": "Ettahrir"
+          },
+          {
+            "name": "El Menzah"
+          },
+          {
+            "name": "Cité Alkhadhra"
+          },
+          {
+            "name": "Séjoumi"
+          },
+          {
+            "name": "Azzouhour"
+          },
+          {
+            "name": "Alhrairia"
+          },
+          {
+            "name": "Sidi Hsine"
+          },
+          {
+            "name": "Ouardia"
+          },
+          {
+            "name": "Sidi Elbéchir"
+          },
+          {
+            "name": "Jebel Jelloud"
+          },
+          {
+            "name": "La Goulette"
+          },
+          {
+            "name": "Le Kram"
+          },
+          {
+            "name": "El Kabbaria"
+          },
+          {
+            "name": "La Marsa"
+          }
+        ]
+      },
+      {
+        "name": "Ariana",
+        "delegations": [
+          {
+            "name": "Ariana Ville"
+          },
+          {
+            "name": "Ettadhamen"
+          },
+          {
+            "name": "M’nihla"
+          },
+          {
+            "name": "Kalâat el-Andalous"
+          },
+          {
+            "name": "La Soukra"
+          },
+          {
+            "name": "Raoued"
+          },
+          {
+            "name": "Sidi Thabet"
+          }
+        ]
+      },
+      {
+        "name": "Manouba",
+        "delegations": [
+          {
+            "name": "Manouba"
+          },
+          {
+            "name": "Oued Ellil"
+          },
+          {
+            "name": "Tebourba"
+          },
+          {
+            "name": "Battan"
+          },
+          {
+            "name": "Jedaida"
+          },
+          {
+            "name": "Mornaguia"
+          },
+          {
+            "name": "Borj Amri"
+          },
+          {
+            "name": "Douar Hicher"
+          }
+        ]
+      },
+      {
+        "name": "Ben Arous",
+        "delegations": [
+          {
+            "name": "Ben Arous"
+          },
+          {
+            "name": "Nouvelle Médina"
+          },
+          {
+            "name": "Mourouj"
+          },
+          {
+            "name": "Hammam Lif"
+          },
+          {
+            "name": "Hammam Chatt"
+          },
+          {
+            "name": "Boumhel Bassatine"
+          },
+          {
+            "name": "Ezzahra"
+          },
+          {
+            "name": "Radès"
+          },
+          {
+            "name": "Mégrine"
+          },
+          {
+            "name": "M’hamdia"
+          },
+          {
+            "name": "Fouchana"
+          },
+          {
+            "name": "Mornag"
+          }
+        ]
+      },
+      {
+        "name": "Nabeul",
+        "delegations": [
+          {
+            "name": "Nabeul"
+          },
+          {
+            "name": "Dar Chaâbane Elfehri"
+          },
+          {
+            "name": "Béni Khiar"
+          },
+          {
+            "name": "Korba"
+          },
+          {
+            "name": "Menzel Temime"
+          },
+          {
+            "name": "Mida"
+          },
+          {
+            "name": "Kelibia"
+          },
+          {
+            "name": "Hammam Ghezaz"
+          },
+          {
+            "name": "Haouaria"
+          },
+          {
+            "name": "Takelsa"
+          },
+          {
+            "name": "Slimane"
+          },
+          {
+            "name": "Menzel Bouzelfa"
+          },
+          {
+            "name": "Béni Khalled"
+          },
+          {
+            "name": "Grombalia"
+          },
+          {
+            "name": "Bouârgoub"
+          },
+          {
+            "name": "Hammamet"
+          }
+        ]
+      },
+      {
+        "name": "Bizerte",
+        "delegations": [
+          {
+            "name": "Bizerte Nord"
+          },
+          {
+            "name": "Jarzouna"
+          },
+          {
+            "name": "Bizerte Sud"
+          },
+          {
+            "name": "Sejnane"
+          },
+          {
+            "name": "Joumine"
+          },
+          {
+            "name": "Mateur"
+          },
+          {
+            "name": "Ghezala"
+          },
+          {
+            "name": "Menzel Bourguiba"
+          },
+          {
+            "name": "Tinja"
+          },
+          {
+            "name": "Utique"
+          },
+          {
+            "name": "Ghar El Melh"
+          },
+          {
+            "name": "Menzel Jemil"
+          },
+          {
+            "name": "El Alia"
+          },
+          {
+            "name": "Ras Jebel"
+          }
+        ]
+      },
+      {
+        "name": "Zaghouan",
+        "delegations": [
+          {
+            "name": "Zaghouan"
+          },
+          {
+            "name": "Zériba"
+          },
+          {
+            "name": "Bir Mecharga"
+          },
+          {
+            "name": "Fahs"
+          },
+          {
+            "name": "Nadhour"
+          },
+          {
+            "name": "Saouaf"
+          }
+        ]
+      },
+      {
+        "name": "Sousse",
+        "delegations": [
+          {
+            "name": "Sousse"
+          },
+          {
+            "name": "Sousse Ville"
+          },
+          {
+            "name": "Sousse Ryadh"
+          },
+          {
+            "name": "Sousse Jawhara"
+          },
+          {
+            "name": "Hammam sousse"
+          },
+          {
+            "name": "Akouda"
+          },
+          {
+            "name": "Kalâa Elkébira"
+          },
+          {
+            "name": "Sidi Bouali"
+          },
+          {
+            "name": "Hergla"
+          },
+          {
+            "name": "Enfidha"
+          },
+          {
+            "name": "Bouficha"
+          },
+          {
+            "name": "Koundar"
+          },
+          {
+            "name": "Sidi Elheni"
+          },
+          {
+            "name": "Msaken"
+          },
+          {
+            "name": "Kalâa Ességhira"
+          }
+        ]
+      },
+      {
+        "name": "Mounastir",
+        "delegations": [
+          {
+            "name": "Monastir"
+          },
+          {
+            "name": "Ouerdanine"
+          },
+          {
+            "name": "Sahline"
+          },
+          {
+            "name": "Zéramdine"
+          },
+          {
+            "name": "Béni Hassan"
+          },
+          {
+            "name": "Jemmel"
+          },
+          {
+            "name": "Benbla"
+          },
+          {
+            "name": "Moknine"
+          },
+          {
+            "name": "Bekalta"
+          },
+          {
+            "name": "Teboulba"
+          },
+          {
+            "name": "Ksar Helal"
+          },
+          {
+            "name": "Ksibet Medyouni"
+          },
+          {
+            "name": "Sayada Lamta Bouhjar"
+          }
+        ]
+      },
+      {
+        "name": "Mahdia",
+        "delegations": [
+          {
+            "name": "Mahdia"
+          },
+          {
+            "name": "Boumerdes"
+          },
+          {
+            "name": "Ouled Chamekh"
+          },
+          {
+            "name": "Chorbane"
+          },
+          {
+            "name": "Hbira"
+          },
+          {
+            "name": "Souassi"
+          },
+          {
+            "name": "Eljem"
+          },
+          {
+            "name": "Chebba"
+          },
+          {
+            "name": "Malloulech"
+          },
+          {
+            "name": "Sidi Alouane"
+          },
+          {
+            "name": "Ksour Essef"
+          }
+        ]
+      },
+      {
+        "name": "Sfax",
+        "delegations": [
+          {
+            "name": "Sfax Ville"
+          },
+          {
+            "name": "Sakiet Ezzit"
+          },
+          {
+            "name": "Sakiet Eddaier"
+          },
+          {
+            "name": "Sfax sud"
+          },
+          {
+            "name": "Tina"
+          },
+          {
+            "name": "Agareb"
+          },
+          {
+            "name": "Jebeniana"
+          },
+          {
+            "name": "El Amra"
+          },
+          {
+            "name": "El Hencha"
+          },
+          {
+            "name": "Menzel chaker"
+          },
+          {
+            "name": "Ghraiba"
+          },
+          {
+            "name": "Bir Ali Ben Khelifa"
+          },
+          {
+            "name": "Sekhira"
+          },
+          {
+            "name": "Mahrès"
+          },
+          {
+            "name": "Kerkennah"
+          }
+        ]
+      },
+      {
+        "name": "Béja",
+        "delegations": [
+          {
+            "name": "Béja Nord"
+          },
+          {
+            "name": "Béja Sud"
+          },
+          {
+            "name": "Amdoun"
+          },
+          {
+            "name": "Goubellat"
+          },
+          {
+            "name": "Medjez el-Bab"
+          },
+          {
+            "name": "Nefza"
+          },
+          {
+            "name": "Téboursouk"
+          },
+          {
+            "name": "Testour"
+          },
+          {
+            "name": "Tibar"
+          }
+        ]
+      },
+      {
+        "name": "Jendouba",
+        "delegations": [
+          {
+            "name": "Jendouba"
+          },
+          {
+            "name": "Jendouba Nord"
+          },
+          {
+            "name": "Boussalem"
+          },
+          {
+            "name": "Tabarka"
+          },
+          {
+            "name": "Ain Drahem"
+          },
+          {
+            "name": "Fernana"
+          },
+          {
+            "name": "Ghardimaou"
+          },
+          {
+            "name": "Oued Mliz"
+          },
+          {
+            "name": "Balta Bouaouene"
+          }
+        ]
+      },
+      {
+        "name": "Siliana",
+        "delegations": [
+          {
+            "name": "Siliana nord"
+          },
+          {
+            "name": "Siliana sud"
+          },
+          {
+            "name": "Bouarada"
+          },
+          {
+            "name": "Gâafour"
+          },
+          {
+            "name": "El Aroussa"
+          },
+          {
+            "name": "Le Krib"
+          },
+          {
+            "name": "Bourouis"
+          },
+          {
+            "name": "Makther"
+          },
+          {
+            "name": "Rouhia"
+          },
+          {
+            "name": "Kesra"
+          },
+          {
+            "name": "Bargou"
+          }
+        ]
+      },
+      {
+        "name": "Kef",
+        "delegations": [
+          {
+            "name": "Kef Ouest"
+          },
+          {
+            "name": "Kef Est"
+          },
+          {
+            "name": "Nebeur"
+          },
+          {
+            "name": "Sakiet Sidi Youssef"
+          },
+          {
+            "name": "Tejerouine"
+          },
+          {
+            "name": "Kalâat sinane"
+          },
+          {
+            "name": "Kalâa El khasba"
+          },
+          {
+            "name": "Jerissa"
+          },
+          {
+            "name": "Ksour"
+          },
+          {
+            "name": "Dahmani"
+          },
+          {
+            "name": "Le Sers"
+          }
+        ]
+      },
+      {
+        "name": "Kairouan",
+        "delegations": [
+          {
+            "name": "Kairouan Nord"
+          },
+          {
+            "name": "Kairouan Sud"
+          },
+          {
+            "name": "Chebika"
+          },
+          {
+            "name": "Sebikha"
+          },
+          {
+            "name": "Oueslatia"
+          },
+          {
+            "name": "Haffouz"
+          },
+          {
+            "name": "El Ala"
+          },
+          {
+            "name": "Hajeb El Ayoun"
+          },
+          {
+            "name": "Nasrallah"
+          },
+          {
+            "name": "Cherarda"
+          },
+          {
+            "name": "Bouhajla"
+          }
+        ]
+      },
+      {
+        "name": "Sidi Bouzid",
+        "delegations": [
+          {
+            "name": "Sidi Bouzid Ouest"
+          },
+          {
+            "name": "Sidi Bouzid Est"
+          },
+          {
+            "name": "Jelma"
+          },
+          {
+            "name": "Sabbalet Ouled Askar"
+          },
+          {
+            "name": "Bir Hfay"
+          },
+          {
+            "name": "Sidi Ali Benôun"
+          },
+          {
+            "name": "Menzel Bouzayane"
+          },
+          {
+            "name": "Meknassi"
+          },
+          {
+            "name": "Souk Jedid"
+          },
+          {
+            "name": "Mezouna"
+          },
+          {
+            "name": "Regueb"
+          },
+          {
+            "name": "Ouled Haffouz"
+          }
+        ]
+      },
+      {
+        "name": "Kasserine",
+        "delegations": [
+          {
+            "name": "Kasserine Nord"
+          },
+          {
+            "name": "Kasserine Sud"
+          },
+          {
+            "name": "Azzouhour"
+          },
+          {
+            "name": "Hassi ferid"
+          },
+          {
+            "name": "Sbitla"
+          },
+          {
+            "name": "Sbiba"
+          },
+          {
+            "name": "Jedliane"
+          },
+          {
+            "name": "El Ayoun"
+          },
+          {
+            "name": "Tela"
+          },
+          {
+            "name": "Hidra"
+          },
+          {
+            "name": "Foussana"
+          },
+          {
+            "name": "Feriana"
+          },
+          {
+            "name": "Mejel Bel Abbes"
+          }
+        ]
+      },
+      {
+        "name": "Gabès",
+        "delegations": [
+          {
+            "name": "Gabès MEDINA"
+          },
+          {
+            "name": "Gabès Ouest"
+          },
+          {
+            "name": "Gabès sud"
+          },
+          {
+            "name": "Ghannouch"
+          },
+          {
+            "name": "Metouia"
+          },
+          {
+            "name": "Menzel habib"
+          },
+          {
+            "name": "Hamma"
+          },
+          {
+            "name": "Matmata"
+          },
+          {
+            "name": "Matmata nouvelle"
+          },
+          {
+            "name": "Mareth"
+          }
+        ]
+      },
+      {
+        "name": "Medenine",
+        "delegations": [
+          {
+            "name": "Mednine Nord"
+          },
+          {
+            "name": "Mednine Sud"
+          },
+          {
+            "name": "Béni khedach"
+          },
+          {
+            "name": "Ben Guerdene"
+          },
+          {
+            "name": "Zazis"
+          },
+          {
+            "name": "Jerba Houmet Souk"
+          },
+          {
+            "name": "Jerba Midoun"
+          },
+          {
+            "name": "Jerba Ajim"
+          },
+          {
+            "name": "Sidi Makhlouf"
+          }
+        ]
+      },
+      {
+        "name": "Gafsa",
+        "delegations": [
+          {
+            "name": "Gafsa Nord"
+          },
+          {
+            "name": "Sidi Aich"
+          },
+          {
+            "name": "El Ksar"
+          },
+          {
+            "name": "Gafsa Sud"
+          },
+          {
+            "name": "Moulares"
+          },
+          {
+            "name": "Redyef"
+          },
+          {
+            "name": "Métlaoui"
+          },
+          {
+            "name": "El Mdhilla"
+          },
+          {
+            "name": "El Guettar"
+          },
+          {
+            "name": "Belkhir"
+          },
+          {
+            "name": "Sned"
+          }
+        ]
+      },
+      {
+        "name": "Tozeur",
+        "delegations": [
+          {
+            "name": "Tozeur"
+          },
+          {
+            "name": "Degueche"
+          },
+          {
+            "name": "Tameghza"
+          },
+          {
+            "name": "Nefta"
+          },
+          {
+            "name": "Hezoua"
+          }
+        ]
+      },
+      {
+        "name": "Tataouine",
+        "delegations": [
+          {
+            "name": "Tataouine Nord"
+          },
+          {
+            "name": "Tataouine Sud"
+          },
+          {
+            "name": "Smar"
+          },
+          {
+            "name": "Bir Lahmer"
+          },
+          {
+            "name": "Ghomrassen"
+          },
+          {
+            "name": "Dhehiba"
+          },
+          {
+            "name": "Remada"
+          }
+        ]
+      },
+      {
+        "name": "Kébili",
+        "delegations": [
+          {
+            "name": "Kébili Sud"
+          },
+          {
+            "name": "Kébili Nord"
+          },
+          {
+            "name": "Souk El Ahad"
+          },
+          {
+            "name": "Douz"
+          },
+          {
+            "name": "El Faouar"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,34 +1,33 @@
 // Server-side code only
-import { DATABASE_URL } from '$env/static/private';
-import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
-import { profileCache } from '$lib/server/cache';
+import { DATABASE_URL } from "$env/static/private";
+import {
+  PUBLIC_SUPABASE_URL,
+  PUBLIC_SUPABASE_ANON_KEY,
+} from "$env/static/public";
+import { profileCache } from "$lib/server/cache";
 import { user } from "$lib/schema/schema";
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
-import { eq } from 'drizzle-orm';
-import { createClient } from '@supabase/supabase-js';
+import { eq } from "drizzle-orm";
+import { createClient } from "@supabase/supabase-js";
 
 export const supabase = createClient(
   PUBLIC_SUPABASE_URL,
-  PUBLIC_SUPABASE_ANON_KEY
+  PUBLIC_SUPABASE_ANON_KEY,
 );
 
 const sql = postgres(DATABASE_URL, {
-  ssl: 'require',
+  ssl: "require",
   max: 1,
   prepare: false,
 });
 export const db = drizzle(sql);
 
-
-
 if (!DATABASE_URL) {
-  throw new Error('DATABASE_URL environment variable is not defined');
+  throw new Error("DATABASE_URL environment variable is not defined");
 }
 
-
-
-export async function setUserRole(userId: string, role: 'admin' | 'user') {
+export async function setUserRole(userId: string, role: "admin" | "user") {
   const result = await db
     .update(user)
     .set({ role })
@@ -48,9 +47,7 @@ export async function createOrUpdateProfile(userData: {
   phone: string;
   etatAdr: string;
   villeAdr: string;
-
 }) {
-
   try {
     const existingProfile = await db
       .select()

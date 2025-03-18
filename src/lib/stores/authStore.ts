@@ -11,8 +11,14 @@ export const userProfile = writable<UserProfile | null>(null);
 
 // Derived stores for common checks
 export const isAuthenticated = derived(session, ($session) => !!$session);
-export const isAdmin = derived(userProfile, ($profile) => $profile?.role === 'admin');
-export const role = derived(userProfile, ($profile) => $profile?.role || 'user');
+export const isAdmin = derived(
+  userProfile,
+  ($profile) => $profile?.role === "admin",
+);
+export const role = derived(
+  userProfile,
+  ($profile) => $profile?.role || "user",
+);
 
 export function RemoveUser() {
   user.set(null);
