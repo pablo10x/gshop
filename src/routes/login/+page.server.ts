@@ -7,6 +7,42 @@ import { superValidate, fail, message } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 import { z } from "zod";
 
+
+
+
+
+
+const authErrorMessages: Record<string, string> = {
+  "Invalid login credentials":
+    "Les identifiants de connexion sont incorrects. Veuillez vérifier vos informations.",
+  "Email not confirmed":
+    "Votre adresse e-mail n'a pas encore été confirmée. Veuillez consulter votre boîte de réception.",
+  "Invalid email or password":
+    "L'adresse e-mail ou le mot de passe est incorrect. Veuillez réessayer.",
+  "Too many attempts":
+    "Pour des raisons de sécurité, votre compte est temporairement bloqué. Veuillez réessayer dans quelques minutes.",
+  "User not found":
+    "Aucun compte n'est associé à cette adresse e-mail. Veuillez créer un compte.",
+  "Password mismatch":
+    "Le mot de passe saisi ne correspond pas à nos enregistrements.",
+  "Account locked":
+    "Votre compte a été temporairement verrouillé pour des raisons de sécurité. Contactez le support.",
+  "Session expired": "Votre session a expiré. Veuillez vous reconnecter.",
+  "Network error":
+    "La connexion au serveur a échoué. Veuillez vérifier votre connexion internet.",
+};
+
+
+
+
+
+
+
+
+
+
+
+
 import citiesData from "$lib/cities.json";
 interface City {
   name: string;
@@ -27,7 +63,6 @@ interface TunisiaData {
     governorates: Governorate[];
   };
 }
-
 
 const formsheet_signup = z.object({
   email: z.string().email({ message: "Email invalide" }),
@@ -59,8 +94,6 @@ export const load = (async ({ locals: { user } }) => {
   // Redirect to home if the user is already logged in
   if (user) throw redirect(303, "/");
 
- 
-
   // Parse the JSON response
   const jsonData = citiesData as TunisiaData;
 
@@ -81,6 +114,7 @@ export const load = (async ({ locals: { user } }) => {
   return {
     loginForm,
     registerForm,
+    cities: citiesData,
     governorates: governorates,
   };
 }) satisfies ServerLoad;
@@ -146,15 +180,16 @@ export const actions: Actions = {
    */
   login: async ({ request, locals: { supabase, user } }) => {
     // Redirect if already logged in
+
     if (user) {
       throw redirect(303, "/");
     }
-    const form = await superValidate(request, zod(formsheet_signup));
-    if (!form.valid) {
-      return fail(400, { form });
+    const loginForm = await superValidate(request, zod(formsheet_login));
+    if (!loginForm.valid) {
+      return fail(400, { loginForm });
     }
 
-    const { email, password } = form.data;
+    const { email, password } = loginForm.data;
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -162,11 +197,16 @@ export const actions: Actions = {
     });
 
     if (error) {
-      console.error("Login error:", error.message);
-      return message(form, error.message);
-    }
+      const frenchErrorMessage =
+        authErrorMessages[error.message] ||
+        "Une erreur est survenue lors de la connexion";
+      console.error("Erreur de connexion:", frenchErrorMessage);
+      return message(loginForm, frenchErrorMessage);
+    
+   
+    } else redirect(303, "/");
 
-    return message(form, "réussie!");
+    return message(loginForm, "réussie!");
   },
 
   /**

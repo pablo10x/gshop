@@ -3,8 +3,12 @@ import { db } from "$lib/server/database/database";
 import { products } from "$lib/schema/schema";
 import { eq } from "drizzle-orm";
 import type { RequestHandler } from "@sveltejs/kit";
-
-export const GET: RequestHandler = async () => {
+import { requireAdmin } from "$lib/server/guards/adminGuard";
+export const GET: RequestHandler = async ({ request, locals }) => {
+  const { success, error } = await requireAdmin(locals);
+  if (!success) {
+    return json(error, { status: error?.code || 500 });
+  }
   try {
     const allProducts = await db.select().from(products);
     return json(allProducts);
@@ -15,6 +19,10 @@ export const GET: RequestHandler = async () => {
 };
 
 export const POST: RequestHandler = async ({ request, locals }) => {
+  const { success, error } = await requireAdmin(locals);
+    if (!success) {
+      return json(error, { status: error?.code || 500 });
+    }
   try {
     const productData = await request.json();
 
@@ -41,6 +49,10 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 };
 
 export const PUT: RequestHandler = async ({ request, locals }) => {
+  const { success, error } = await requireAdmin(locals);
+    if (!success) {
+      return json(error, { status: error?.code || 500 });
+    }
   try {
     const productData = await request.json();
     const { id, createdAt, updatedAt, ...updateData } = productData;
@@ -72,6 +84,10 @@ export const PUT: RequestHandler = async ({ request, locals }) => {
 };
 
 export const DELETE: RequestHandler = async ({ request, locals }) => {
+  const { success, error } = await requireAdmin(locals);
+    if (!success) {
+      return json(error, { status: error?.code || 500 });
+    }
   try {
     const { id } = await request.json();
     const result = await db

@@ -1,20 +1,28 @@
 <script lang="ts">
-  import { user } from '$lib/stores/authStore';
-  import { cart, removeFromCart } from '$lib/stores/cartStore';
+  import { user } from "$lib/stores/authStore";
+  import { cart, removeFromCart } from "$lib/stores/cartStore";
   import { isCartOpen } from "$lib/stores/ui";
   import { Button, Modal } from "flowbite-svelte";
-  import { get } from 'svelte/store';
+  import { get } from "svelte/store";
 
   function getTotalPrice() {
     return $cart
-      .reduce((sum, item) => sum + (item.product?.price ?? 0) * item.quantity, 0)
-      .toFixed(2); 
+      .reduce(
+        (sum, item) => sum + (item.product?.price ?? 0) * item.quantity,
+        0
+      )
+      .toFixed(2);
   }
 
   function proceedToCheckout() {
     // Implement checkout logic here
     alert("Proceeding to checkout!");
     isCartOpen.set(false);
+  }
+
+  function handleRemoveItem(productId: number) {
+    const currentUser = get(user);
+    removeFromCart(productId, currentUser?.id);
   }
 </script>
 
@@ -41,32 +49,28 @@
           >
             <div class="flex-grow pr-4">
               <p class="text-sm sm:text-base font-semibold text-gray-800">
-                {item.product?.name || name}
+                {item.product?.name || "Unnamed Product"}
               </p>
               <div class="flex items-center gap-2">
                 <span class="text-xs sm:text-sm text-gray-600">
-                  {#if item.quantity > 1}{item.quantity} × {item.product?.price} TND{:else}
-                    {item.product?.price} TND
+                  {#if item.quantity > 1}
+                    {item.quantity} × {item.product?.price.toFixed(2)} TND
+                  {:else}
+                    {item.product?.price.toFixed(2)} TND
                   {/if}
                 </span>
               </div>
             </div>
             <div class="flex items-center gap-2">
-              <!--
               <span class="text-sm sm:text-base font-bold text-gray-900">
-                {(item.price * item.quantity).toFixed(2)} TND
-              </span>-->
+                {((item.product?.price || 0) * item.quantity).toFixed(2)} TND
+              </span>
               <Button
                 color="yellow"
                 outline
                 size="lg"
                 class="py-2 bg-stone-600"
-                on:click={() => {
-                  const currentUser = get(user);
-                  if (currentUser) {
-                    removeFromCart(item.id, currentUser.id);
-                  }
-                }}
+                on:click={() => handleRemoveItem(item.product_id)}
               >
                 ✕
               </Button>
@@ -97,5 +101,4 @@
 </Modal>
 
 <style>
- 
 </style>

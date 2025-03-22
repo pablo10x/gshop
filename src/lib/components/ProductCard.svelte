@@ -4,6 +4,9 @@
   import type { Product, CartItem } from '$lib/models/product';
   import { get } from 'svelte/store';
   import { user } from '$lib/stores/authStore';
+ 
+  import {notifications} from '$lib/stores/notificationStore';
+
 
   export let id = 1;
   export let name = "Product Name";
@@ -19,18 +22,27 @@
   // Check if item is already in cart
   $: isInCart = $cart.some(item => item.id === id);
 
-  // Add item to cart
+
+
   function handleAddToCart() {
   const currentUser = get(user);
   const cartItem: CartItem = {
-    id: Date.now(), // or any unique identifier
+    id: Date.now(),
     product_id: id,
     quantity: 1,
-    user_id: currentUser?.id
+    user_id: currentUser?.id,
+    product: {
+      id: id,
+      name: name,
+      price: parseFloat(price.replace('$', '').replace(',', '')),
+      image: image,
+      info: info
+    }
   };
-
+  notifications.add('Product added to cart','success');
   addToCart(cartItem);
 }
+
 </script>
 
 <div class="bg-white w-full sm:w-72 max-w-md mx-auto  border border-zinc-200  shadow-md overflow-hidden transition-all duration-300 hover:shadow-2xl group">

@@ -3,9 +3,9 @@ export interface Product {
   name: string;
   price: number;
   image: string;
-  rating: number;
-  isNew: boolean;
-  onSale: boolean;
+  rating?: number;
+  isNew?: boolean;
+  onSale?: boolean;
   originalPrice?: number;
   info: string;
   categoryId: number; // Add categoryId
@@ -15,12 +15,16 @@ export interface Product {
 
 export interface CartItem {
   id: number;
-  user_id?: string;
   product_id: number;
   quantity: number;
-  created_at?: string;
-  updated_at?: string;
-  product?: Product; // Joined product data
+  user_id?: string;
+  product?: {
+    id: number;
+    name: string;
+    price: number;
+    image: string;
+    info: string;
+  };
 }
 
 export interface Category {

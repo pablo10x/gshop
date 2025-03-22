@@ -23,29 +23,49 @@
 </script>
 
 <div 
-  class="fixed top-4 right-4 z-50 space-y-2 w-full max-w-xs sm:max-w-md md:max-w-lg"
+  class="fixed bottom-0 right-0 z-50 p-4 space-y-3 w-full max-w-xs sm:max-w-md lg:max-w-lg"
   aria-live="assertive"
 >
   {#each $notifications as notification (notification.id)}
     <div
-      in:fly={{ x: 300, duration: 300 }}
+      in:fly={{ y: 50, duration: 400 }}
       out:fade={{ duration: 300 }}
-      class="flex w-full"
+      class="flex w-full transform hover:scale-102 transition-transform duration-200"
     >
       <Alert
         color={colors[notification.type]}
         dismissable
+        class="w-full shadow-lg backdrop-blur-sm bg-opacity-95 border-l-4"
         on:dismiss={() => notifications.remove(notification.id)}
       >
         <svelte:component 
           this={icons[notification.type]} 
-          class="w-5 h-5 mr-2" 
+          class="w-6 h-6 mr-3 animate-bounce-subtle" 
           slot="icon"
         />
-        <span class="font-medium">
+        <span class="font-medium text-sm sm:text-base">
           {notification.message}
         </span>
       </Alert>
     </div>
   {/each}
 </div>
+
+<style>
+  @keyframes bounce-subtle {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-2px); }
+  }
+  
+  :global(.animate-bounce-subtle) {
+    animation: bounce-subtle 2s infinite;
+  }
+  
+  :global(.transform) {
+    transition: all 0.2s ease;
+  }
+  
+  :global(.hover\:scale-102:hover) {
+    transform: scale(1.02);
+  }
+</style>

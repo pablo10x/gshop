@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { nodes } from "./../../../.svelte-kit/generated/client-optimized/app.js";
   // Import statements
   import {
     Alert,
@@ -14,13 +13,11 @@
     Helper,
   } from "flowbite-svelte";
   import { InfoCircleSolid, CloseCircleSolid } from "flowbite-svelte-icons";
-  import type { PageProps } from "./$types";
   import type { PageData } from "./$types";
   import { fade, fly } from "svelte/transition";
   import { quintOut } from "svelte/easing";
   import { superForm } from "sveltekit-superforms/client";
   import { writable } from "svelte/store";
-  import { notifications } from "$lib/stores/notificationStore";
   // Types
   interface LoginForm {
     email: string;
@@ -31,36 +28,20 @@
   const { data } = $props();
 
   // Form state
-  const {
-    form,
-    errors: registerForm_errors,
-    constraints: registerForm_constraints,
-    message: registerForm_message,
-    enhance,
-    delayed,
-  } = superForm(data.registerForm, {
-    delayMs: 1000,
-    timeoutMs: 9000,
-    onResult: ({ result }) => {
-      if (result.type === "success") {
-        console.log("Success", result);
-      } else {
-        console.log("Error", result);
-      }
-    },
-  });
+  const { form, errors, message, enhance, delayed } = superForm(
+    data.registerForm,
+    {
+      delayMs: 1000,
+      timeoutMs: 9000,
+    }
+  );
+
   let activeTab = writable("login");
 
-  let errorOccurred = writable(false);
-
   // Registration form fields
-
   let phone = $state("");
   let etat = $state("");
   let villeAdr = $state("");
-
-  // Login form state
-  let emailLogin = $state<LoginForm>({ email: "", password: "" });
   let loading = $state(false);
 
   /**
@@ -75,13 +56,14 @@
 </script>
 
 <div
-  class=" absolute inset-0 min-h-screen flex items-center justify-center
-  bg-gradient-to-r from-zinc-400 via-slate-500 to-sky-300
-  bg-[size:500%] animate-gradient-move px-4"
+  class=" absolute inset-0 min-h-screen p-6 flex items-center justify-center
+     bg-zinc-600
+     
+    bg-[size:500%] animate-gradient-move px-4"
 >
   <div class="w-full md:w-1/2 lg:w-1/1 animate-fadeIn">
     <div
-      class=" bg-zinc-600/70 backdrop-blur-lg rounded-2xl shadow-sm drop-shadow-sm shadow-sky-200 px-5 space-y-6 py-6 transition-all duration-300 ease-in-out"
+      class=" bg-gradient-to-t from-cyan-100 via-orange-50 to-yellow-50 backdrop-blur-lg rounded-2xl shadow-sm drop-shadow-sm shadow-sky-200 px-5 space-y-6 py-6 transition-all duration-300 ease-in-out"
     >
       <div
         class="absolute top-0 right-0 p-4 rounded text-[30px] text-red-400 font-roboto hover:text-lime-200 hover:animate-fadein"
@@ -90,7 +72,7 @@
       </div>
       <div class="flex flex-col items-center justify-center">
         <h1
-          class="backdrop-brightness-95 backdrop-blur-lg rounded-lg text-3xl font-bold text-center text-zinc-200 p-6 mb-8 space-x-2"
+          class="backdrop-brightness-95 backdrop-blur-lg rounded-lg text-3xl font-bold text-center text-zinc-600 p-6 mb-8 space-x-2"
         >
           {#if $delayed}Loading{:else}bienvenue{/if}
 
@@ -103,46 +85,73 @@
       <Tabs
         tabStyle="underline"
         style="pills"
-        class="!border-none items-center justify-center "
+        class="!border-none items-center justify-center"
       >
+        <!--login-->
         <TabItem
           open={$activeTab === "login"}
           title="SE CONNECTER"
           value="login"
-          class="text-white  bg-white rounded-md hover:shadow-md hover:shadow-white/50 focus:shadow-md focus:shadow-lime-200   animate-fadeIn"
+          on:click={() => activeTab.set("login")}
+          class="text-white  bg-zinc-00 rounded-md hover:shadow-md hover:shadow-white/50 focus:shadow-md focus:shadow-lime-200   animate-fadeIn"
         >
           <div
             in:fly={{ y: 15, duration: 300, delay: 50, easing: quintOut }}
             out:fade={{ duration: 100 }}
           >
+           {#if $errors.email || $errors.password || $message}
+            <Alert
+  color="red"
+  rounded={false}
+  class="border-white/20 border-t-4 border-l-4 border-spacing-2 text-red-400 
+  font-roboto  font-bold bg-gray-600 rounded-xl mb-4
+  animate-slideIn hover:scale-[1.02] transition-transform
+  shadow-lg shadow-red-500/20"
+>
+                {#if $message}
+                >> {$message}
+                {/if}
+                <ul class="mt-1.5 ms-4 list-disc list-inside">
+                  {#if $errors.email}
+                    <li>{$errors.email}</li>
+                  {/if}
+
+                  {#if $errors.password}
+                    <li>{$errors.password}</li>
+                  {/if}
+                </ul></Alert
+              >
+            {/if}
             <form use:enhance method="POST" action="?/login" class="space-y-8">
-              <div class="space-y-2">
+              <div
+                class="space-y-2 font-roboto font-bold text-6xl bg-slate-800/20 rounded-md text-lime-400"
+              >
                 <FloatingLabelInput
-                  style="filled"
+                  style="outlined"
                   type="email"
                   name="email"
                   id="email"
+                  color="base"
                   bind:value={$form.email}
-                  required
+                
                   disabled={loading}
-                  placeholder="nom@email.com"
-                  class="bg-white/20 border-gray-600 placeholder-gray-400 text-white"
-                  >Email</FloatingLabelInput
+                  placeholder="nom@email.com">Email</FloatingLabelInput
                 >
               </div>
 
-              <div class="space-y-5">
+              <div
+                class="space-y-2 font-roboto font-bold text-6xl bg-slate-800/20 rounded-md text-red-400"
+              >
                 <FloatingLabelInput
                   type="password"
                   name="password"
                   id="password"
-                  bind:value={emailLogin.password}
-                  required
+                  style="outlined"
+                  bind:value={$form.password}
+                
                   disabled={loading}
                   placeholder="••••••••"
-                  minlength={6}
-                  class="bg-white/20 border-gray-600 placeholder-gray-700 text-zinc-600 "
-                  >Password</FloatingLabelInput
+                  minlength={8}>Password</FloatingLabelInput
                 >
               </div>
 
@@ -173,10 +182,11 @@
 
             <div class="space-y-3">
               <form use:enhance method="POST" action="?/googleLogin">
+                <!-- Google button -->
                 <Button
                   type="submit"
                   color="light"
-                  class="w-full hover:bg-gray-200 transition-all duration-200"
+                  class="w-full bg-gradient-to-r from-cyan-400 via-orange-100 to-red-200  hover:bg-gray-200 transition-all duration-200"
                 >
                   <svg
                     class="w-5 h-5 mr-2"
@@ -196,6 +206,7 @@
               </form>
 
               <form use:enhance method="POST" action="?/facebookLogin">
+                <!-- Facebook login form -->
                 <Button
                   type="submit"
                   color="blue"
@@ -220,11 +231,11 @@
         >
 
         <TabItem
+          open={$activeTab === "register"}
           title="CREER UN COMPTE"
           value="register"
-          class="text-white {$errorOccurred
-            ? 'hidden'
-            : 'block'}  bg-white rounded-md hover:shadow-md hover:shadow-white/50 animate-fadeIn"
+          on:click={() => activeTab.set("register")}
+          class="text-white  bg-zinc-200 rounded-md hover:shadow-md hover:shadow-white/50 animate-fadeIn"
         >
           <div
             in:fly={{ y: 15, duration: 300, delay: 50, easing: quintOut }}
@@ -243,7 +254,7 @@
                     type="text"
                     style="standard"
                     name="fullname"
-                    color={$registerForm_errors.fullname ? "red" : "base"}
+                    color={$form.fullname ? "red" : "base"}
                     id="fullname"
                     bind:value={$form.fullname}
                     maxlength={20}
@@ -252,7 +263,7 @@
                     class="bg-black border-green-800 placeholder-gray-800 text-slate-800  font-roboto  focus:border-lime-500  focus:ring-lime-100  focus:shadow-lg"
                     >Nom et prénom</FloatingLabelInput
                   >
-                  {#if $registerForm_errors.fullname}
+                  {#if $errors.fullname}
                     <Helper
                       color="red"
                       class="flex flex-row gap-x-2 animate-fadeIn"
@@ -261,7 +272,7 @@
                       <div
                         class="text-red-500 font-roboto font-bold underline underline-offset-4"
                       >
-                        {$registerForm_errors.fullname}
+                        {$errors.fullname}
                       </div>
                     </Helper>
                   {/if}
@@ -272,14 +283,14 @@
                     type="email"
                     name="email"
                     id="email"
-                    color={$registerForm_errors.email ? "red" : "base"}
+                    color={$form.email ? "red" : "base"}
                     bind:value={$form.email}
                     disabled={$delayed}
                     placeholder="email.com"
                     class="bg-white border-gray-600 placeholder-gray-400 text-slate-800 font-rubik  focus:border-lime-500  focus:ring-lime-100  focus:shadow-lg"
                     >Email</FloatingLabelInput
                   >
-                  {#if $registerForm_errors.email}
+                  {#if $errors.email}
                     <Helper
                       color="red"
                       class="flex flex-row gap-x-2 animate-fadeIn"
@@ -288,7 +299,7 @@
                       <div
                         class="text-red-500 font-roboto font-bold underline underline-offset-4"
                       >
-                        {$registerForm_errors.email}
+                        {$errors.email}
                       </div>
                     </Helper>
                   {/if}
@@ -300,13 +311,13 @@
                     name="password"
                     id="password"
                     bind:value={$form.password}
-                    color={$registerForm_errors.password ? "red" : "base"}
+                    color={$form.password ? "red" : "base"}
                     disabled={$delayed}
                     placeholder="********"
                     class="bg-white/20 border-gray-600 placeholder-gray-400 text-slate-800 font-rubik  focus:border-lime-500  focus:ring-lime-100  focus:shadow-lg"
                     >Mot de passe</FloatingLabelInput
                   >
-                  {#if $registerForm_errors.password}
+                  {#if $errors.password}
                     <Helper
                       color="red"
                       class="flex flex-row gap-x-2 animate-fadeIn"
@@ -315,7 +326,7 @@
                       <div
                         class="text-red-500 font-roboto font-bold underline underline-offset-4"
                       >
-                        {$registerForm_errors.password}
+                        {$errors.password}
                       </div>
                     </Helper>
                   {/if}
@@ -343,7 +354,7 @@
                       </option>
                     {/each}
                   </Select>
-                  {#if $registerForm_errors.etat}
+                  {#if $errors.etat}
                     <Helper
                       color="red"
                       class="flex flex-row gap-x-2 animate-fadeIn"
@@ -352,7 +363,7 @@
                       <div
                         class="text-red-500 font-roboto font-bold underline underline-offset-4"
                       >
-                        {$registerForm_errors.etat}
+                        {$errors.etat}
                       </div>
                     </Helper>
                   {/if}
@@ -372,15 +383,25 @@
                     class="bg-zinc-500 border-gray-600  text-slate-100 font-rubik  focus:border-sky-500  focus:ring-lime-100  focus:shadow-lg"
                   >
                     {#if etat}
+                      {#each data.governorates.find((gov) => gov.name === etat)?.delegations || [] as delegation}
+                        <option
+                          class="bg-zinc-800/20 backdrop-blur-md text-white transition-opacity duration-200 ease-in-out text-2xl font-roboto"
+                          value={delegation}>{delegation}</option
+                        >
+                      {/each}
+                    {/if}
+
+                    <!--
+                    {#if etat}
                       {#each data.governorates.find((gov: any) => gov.name === etat).delegations as city}
                         <option
                           class="bg-zinc-800/20 backdrop-blur-md text-white transition-opacity duration-200 ease-in-out text-2xl font-roboto"
                           value={city}>{city}</option
                         >
                       {/each}
-                    {/if}
+                                                                                                                                                            {/if} -->
                   </Select>
-                  {#if $registerForm_errors.villeAdr}
+                  {#if $errors.villeAdr}
                     <Helper
                       color="red"
                       class="flex flex-row gap-x-2 animate-fadeIn"
@@ -389,7 +410,7 @@
                       <div
                         class="text-red-500 font-roboto font-bold underline underline-offset-4"
                       >
-                        {$registerForm_errors.villeAdr}
+                        {$errors.villeAdr}
                       </div>
                     </Helper>
                   {/if}
@@ -421,7 +442,7 @@
                       class="bg-white/20 border-gray-600 placeholder-gray-400 text-slate-800 font-rubik  focus:border-lime-500 underline focus:ring-lime-100 pl-24"
                     />
                   </div>
-                  {#if $registerForm_errors.phone}
+                  {#if $errors.phone}
                     <Helper
                       color="red"
                       class="flex flex-row gap-x-2 animate-fadeIn"
@@ -430,7 +451,7 @@
                       <div
                         class="text-red-500 font-roboto font-bold underline underline-offset-4"
                       >
-                        {$registerForm_errors.phone}
+                        {$errors.phone}
                       </div>
                     </Helper>
                   {/if}
@@ -461,17 +482,48 @@
           </div></TabItem
         >
       </Tabs>
-      {#if $registerForm_message}
-      {$errorOccurred = true}
-        <Alert color="red" class="mb-4 animate-fadeIn" dismissable>
-          >{$registerForm_message}</Alert
-        >
-      {/if}
     </div>
   </div>
 </div>
 
 <style>
+
+
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%);
+  }
+  60% {
+    transform: translateX(1%);
+  }
+  80% {
+    transform: translateX(-5%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+:global(.animate-slideIn) {
+  animation: slideIn 0.6s ease-out forwards;
+}
+
+/* Add a pulse effect when there's an error */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+:global(.alert-pulse) {
+  animation: pulse 2s ease-in-out infinite;
+}
+
   :global(.animate-fadeIn) {
     animation: fadeIn 0.2s ease-in-out;
   }
@@ -481,11 +533,13 @@
       opacity: 0;
       transform: translateY(-10px);
     }
+
     to {
       opacity: 1;
       transform: translateY(0);
     }
   }
+
   :global(.animate-bounceIn) {
     animation: bounceIn 0.2s ease-in-out;
   }
@@ -495,14 +549,17 @@
       opacity: 0.5;
       transform: scale(0.2);
     }
+
     50% {
       opacity: 1;
       transform: scale(0.7);
     }
+
     100% {
       transform: scale(1);
     }
   }
+
   *:global(.animate-shake) {
     animation: shake 0.2s ease-in-out;
   }
@@ -512,12 +569,15 @@
     100% {
       transform: translateX(0);
     }
+
     25% {
       transform: translateX(-50px);
     }
+
     50% {
       transform: translateX(50px);
     }
+
     75% {
       transform: translateX(-5px);
     }
