@@ -8,7 +8,7 @@ export interface Product {
   onSale?: boolean;
   originalPrice?: number;
   info: string;
-  categoryId: number; // Add categoryId
+  CollectionId: number; // Add CollectionId
   created_at?: string;
   updated_at?: string;
 }
@@ -27,7 +27,7 @@ export interface CartItem {
   };
 }
 
-export interface Category {
+export interface Collection {
   id: number;
   name: string;
   description?: string;

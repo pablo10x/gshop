@@ -30,7 +30,7 @@ export const POST: RequestHandler = async ({ request }) => {
           id: userData.id,
           email: userData.email,
           phone: userData.phone || "",
-          address: "",
+          villeAdr: "",
         })
         .returning();
       return json(created[0]);

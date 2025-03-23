@@ -51,7 +51,7 @@
   });
 </script>
 
-<div class="min-h-screen bg-gradient-to-b bg-zinc-200">
+<div class="min-h-screen bg-gradient-to-b bg-zinc-600">
   <Navbar {data} />
   <NotificationToast />
   {@render children()}

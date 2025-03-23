@@ -2,75 +2,101 @@
   import { onMount } from 'svelte';
   import { Button, GradientButton, Table, Modal, Input, Label, Spinner } from 'flowbite-svelte';
   import { fade, slide } from 'svelte/transition';
-  import type { Category } from '$lib/models/product';
+  import type { Collection } from '$lib/models/product';
   
-  let categories: Category[] = [];
+  let Collections: Collection[] = [];
   let loading = false;
   let error: string | null = null;
   let showModal = false;
-  let editingCategory: Partial<Category> = {};
+  let editingCollection: Partial<Collection> = {};
   let searchTerm = '';
   
-  $: filteredCategories = categories.filter(category => 
-    category.name.toLowerCase().includes(searchTerm.toLowerCase())
+  $: filteredCollections = Collections.filter(Collection => 
+    Collection.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  async function loadCategories() {
+  /**
+   * Fetches collections from the API
+   * Uses a try-catch block for error handling
+   */
+  async function loadCollections() {
     loading = true;
+    error = null; // Reset error state
     try {
-      const response = await fetch('/api/admin/categories');
-      if (!response.ok) throw new Error('Failed to fetch categories');
-      categories = await response.json();
+      const response = await fetch('/api/admin/collections');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.message || 'Failed to fetch Collections');
+      }
+      Collections = await response.json();
     } catch (e: any) {
       error = e.message;
+      Collections = []; // Reset collections on error
     } finally {
       loading = false;
     }
   }
 
-  async function saveCategory() {
+  /**
+   * Creates or updates a collection
+   * @returns {Promise<void>}
+   */
+  async function saveCollection() {
+    error = null; // Reset error state
     try {
-      const method = editingCategory.id ? 'PUT' : 'POST';
-      const response = await fetch('/api/admin/categories', {
+      const method = editingCollection.id ? 'PUT' : 'POST';
+      const response = await fetch('/api/admin/collections', {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(editingCategory)
+        body: JSON.stringify(editingCollection)
       });
       
-      if (!response.ok) throw new Error('Failed to save category');
+      const data = await response.json().catch(() => null);
+      if (!response.ok) {
+        throw new Error(data?.message || 'Failed to save Collection');
+      }
       
-      await loadCategories();
+      await loadCollections();
       showModal = false;
-      editingCategory = {};
+      editingCollection = {};
     } catch (e: any) {
       error = e.message;
     }
   }
 
-  async function deleteCategory(id: number) {
-    if (!confirm('Are you sure you want to delete this category?')) return;
+  /**
+   * Deletes a collection by ID
+   * @param {number} id - Collection ID to delete
+   */
+  async function deleteCollection(id: number) {
+    if (!confirm('Are you sure you want to delete this Collection?')) return;
     
+    error = null; // Reset error state
     try {
-      const response = await fetch('/api/admin/categories', {
+      const response = await fetch('/api/admin/collections', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id })
       });
       
-      if (!response.ok) throw new Error('Failed to delete category');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.message || 'Failed to delete Collection');
+      }
       
-      categories = categories.filter(c => c.id !== id);
+      // Optimistically update UI
+      Collections = Collections.filter(c => c.id !== id);
     } catch (e: any) {
       error = e.message;
     }
   }
 
-  function editCategory(category: Category) {
-    editingCategory = { ...category };
+  function editCollection(Collection: Collection) {
+    editingCollection = { ...Collection };
     showModal = true;
   }
 
-  onMount(loadCategories);
+  onMount(loadCollections);
 </script>
 
 <div class="min-h-screen bg-gray-100 p-4 md:p-8">
@@ -81,23 +107,23 @@
     >
       <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
         <h1 class="text-2xl md:text-3xl font-bold text-gray-800 font-rubik">
-          Category Management
+          Collection Management
         </h1>
         <div class="flex gap-4 w-full md:w-auto">
           <Input
             class="max-w-xs"
             type="search"
             bind:value={searchTerm}
-            placeholder="Search categories..."
+            placeholder="Search Collections..."
           />
           <GradientButton
             color="purpleToBlue"
             on:click={() => {
-              editingCategory = {};
+              editingCollection = {};
               showModal = true;
             }}
           >
-            Add Category
+            Add Collection
           </GradientButton>
         </div>
       </div>
@@ -125,20 +151,20 @@
               </tr>
             </thead>
             <tbody>
-              {#each filteredCategories as category (category.id)}
+              {#each filteredCollections as Collection (Collection.id)}
                 <tr
                   transition:slide
                   class="bg-white border-b hover:bg-gray-50"
                 >
                   <td class="px-6 py-4 font-medium text-gray-900">
-                    {category.name}
+                    {Collection.name}
                   </td>
                   <td class="px-6 py-4">
                     <div class="flex gap-2">
-                      <GradientButton size="xs" color="cyanToBlue" on:click={() => editCategory(category)}>
+                      <GradientButton size="xs" color="cyanToBlue" on:click={() => editCollection(Collection)}>
                         Edit
                       </GradientButton>
-                      <GradientButton size="xs" color="redToYellow" on:click={() => deleteCategory(category.id)}>
+                      <GradientButton size="xs" color="redToYellow" on:click={() => deleteCollection(Collection.id)}>
                         Delete
                       </GradientButton>
                     </div>
@@ -147,7 +173,7 @@
               {:else}
                 <tr>
                   <td colspan="2" class="px-6 py-4 text-center text-gray-500">
-                    No categories found
+                    No Collections found
                   </td>
                 </tr>
               {/each}
@@ -166,19 +192,19 @@
   class="w-full md:max-w-3xl mx-auto"
 >
   <form 
-    on:submit|preventDefault={saveCategory}
+    on:submit|preventDefault={saveCollection}
     class="space-y-6"
     transition:fade
   >
     <h3 class="text-xl font-medium text-gray-900 font-rubik">
-      {editingCategory.id ? 'Edit Category' : 'Add Category'}
+      {editingCollection.id ? 'Edit Collection' : 'Add Collection'}
     </h3>
     
     <div>
       <Label for="name">Name</Label>
       <Input
         id="name"
-        bind:value={editingCategory.name}
+        bind:value={editingCollection.name}
         required
         class="mt-1"
       />
@@ -192,7 +218,7 @@
         Cancel
       </Button>
       <GradientButton type="submit" color="purpleToBlue">
-        {editingCategory.id ? 'Update' : 'Create'} Category
+        {editingCollection.id ? 'Update' : 'Create'} Collection
       </GradientButton>
     </div>
   </form>

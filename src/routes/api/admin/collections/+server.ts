@@ -1,37 +1,28 @@
 import { json } from "@sveltejs/kit";
 import { db } from "$lib/server/database/database";
-import { categories } from "$lib/schema/schema";
+import { Collections } from "$lib/schema/schema";
 import { eq } from "drizzle-orm";
 import type { RequestHandler } from "@sveltejs/kit";
-import { requireAdmin } from "$lib/server/guards/adminGuard";
 export const GET: RequestHandler = async ({ request, locals }) => {
   // console.log(locals)
 
 
-  const { success, error } = await requireAdmin(locals);
-  if (!success) {
-    return json(error, { status: error?.code || 500 });
-  }
-
   try {
       
-    const allCategories = await db.select().from(categories);
-    return json(allCategories);
+    const allCollections = await db.select().from(Collections);
+    return json(allCollections);
   } catch (error: any) {
-    console.error("Failed to fetch categories:", error);
+    console.error("Failed to fetch Collections:", error);
     return json({ error: error.message }, { status: 500 });
   }
 };
 
 export const POST: RequestHandler = async ({ request, locals }) => {
-  const { success, error } = await requireAdmin(locals);
-  if (!success) {
-    return json(error, { status: error?.code || 500 });
-  }
+
   try {
     const categoryData = await request.json();
     const result = await db
-      .insert(categories)
+      .insert(Collections)
       .values({
         name: categoryData.name,
       })
@@ -45,10 +36,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 };
 
 export const PUT: RequestHandler = async ({ request, locals }) => {
-  const { success, error } = await requireAdmin(locals);
-  if (!success) {
-    return json(error, { status: error?.code || 500 });
-  }
+  
   try {
     const categoryData = await request.json();
     const { id, ...updateData } = categoryData;
@@ -59,9 +47,9 @@ export const PUT: RequestHandler = async ({ request, locals }) => {
       (key) => updateData[key] === undefined && delete updateData[key]
     );
     const result = await db
-      .update(categories)
+      .update(Collections)
       .set(updateData)
-      .where(eq(categories.id, id))
+      .where(eq(Collections.id, id))
       .returning();
 
     console.log("Update result:", result); // Log update result
@@ -78,15 +66,12 @@ export const PUT: RequestHandler = async ({ request, locals }) => {
 };
 
 export const DELETE: RequestHandler = async ({ request, locals }) => {
-  const { success, error } = await requireAdmin(locals);
-  if (!success) {
-    return json(error, { status: error?.code || 500 });
-  }
+ 
   try {
     const { id } = await request.json();
     const result = await db
-      .delete(categories)
-      .where(eq(categories.id, id))
+      .delete(Collections)
+      .where(eq(Collections.id, id))
       .returning();
 
     if (!result.length) {

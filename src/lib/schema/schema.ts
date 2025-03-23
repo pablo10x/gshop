@@ -9,7 +9,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import type CategoryManagement from "$lib/components/CategoryManagement.svelte";
+import type CollectionManagement from "$lib/components/CategoryManagement.svelte";
 
 // Users table
 export const user = pgTable("user", {
@@ -25,7 +25,7 @@ export const user = pgTable("user", {
 });
 
 // Products schema
-export const categories = pgTable("categories", {
+export const Collections = pgTable("Collections", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
@@ -34,7 +34,7 @@ export const categories = pgTable("categories", {
 
 export const products = pgTable("products", {
   id: serial("id").primaryKey(),
-  categoryId: integer("categoryId").references(() => categories.id, {
+  CollectionId: integer("CollectionId").references(() => Collections.id, {
     onDelete: "cascade",
   }),
   name: text("name").notNull(),
@@ -99,9 +99,9 @@ export const orderItems = pgTable("order_items", {
 
 // Relations
 export const productsRelations = relations(products, ({ one, many }) => ({
-  collection: one(categories, {
-    fields: [products.categoryId],
-    references: [categories.id],
+  collection: one(Collections, {
+    fields: [products.CollectionId],
+    references: [Collections.id],
   }),
   images: many(productImages),
   cartItems: many(cartItems),

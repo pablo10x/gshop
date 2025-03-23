@@ -1,7 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
 import { type Handle, redirect } from "@sveltejs/kit";
 import { sequence } from "@sveltejs/kit/hooks";
-
+import { db } from "$lib/server/database/database";
+import { user  as __user} from "$lib/schema/schema";
+import { eq } from "drizzle-orm";
 import {
   PUBLIC_SUPABASE_URL,
   PUBLIC_SUPABASE_ANON_KEY,
@@ -30,7 +32,7 @@ const supabase: Handle = async ({ event, resolve }) => {
           });
         },
       },
-    },
+    }
   );
 
   /**
@@ -75,10 +77,35 @@ const authGuard: Handle = async ({ event, resolve }) => {
   event.locals.user = user;
 
   if (!event.locals.session && event.url.pathname.startsWith("/authed")) {
-    redirect(303, "/auth");
+    redirect(303, "/login");
   }
 
-  if (event.locals.session && event.url.pathname === "/auth") {
+  if (event.url.pathname.startsWith("/admin")) {
+    // Check if the path starts with "/admin"
+    if (!session?.user?.id) {
+       redirect(303, "/login");
+    }
+  const [dbUser] = await db
+    .select()
+    .from(__user)
+    .where(eq(__user.id, session?.user.id));
+   
+    if (!dbUser || dbUser.role !== "admin") {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: {
+            code: 404,
+            message: "User not found in database",
+          },
+        }),
+        { status: 404, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+  
+  }
+  if (event.locals.session && event.url.pathname === "/login") {
     redirect(303, "/");
   }
 

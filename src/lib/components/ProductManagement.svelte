@@ -2,10 +2,10 @@
   import { onMount } from 'svelte';
   import { Button, Table, Modal, Input, Label, Textarea, Spinner, Select } from 'flowbite-svelte';
   import { fade, slide } from 'svelte/transition';
-  import type { Product , Category } from '$lib/models/product';
+  import type { Product , Collection } from '$lib/models/product';
   
   let products: Product[] = [];
-  let categories: Category[] = [];
+  let collections: Collection[] = [];
   let loading = false;
   let error: string | null = null;
   let showModal = false;
@@ -29,11 +29,11 @@
     }
   }
 
-  async function loadCategories() {
+  async function loadcollections() {
     try {
-      const response = await fetch('/api/admin/categories');
-      if (!response.ok) throw new Error('Failed to fetch categories');
-      categories = await response.json();
+      const response = await fetch('/api/admin/collections');
+      if (!response.ok) throw new Error('Failed to fetch collections');
+      collections = await response.json();
     } catch (e: any) {
       error = e.message;
     }
@@ -42,7 +42,7 @@
   async function saveProduct() {
     try {
       const method = editingProduct.id ? 'PUT' : 'POST';
-      console.log(editingProduct.categoryId);
+      console.log(editingProduct.CollectionId);
       const response = await fetch('/api/admin/products', {
         method,
         headers: { 'Content-Type': 'application/json' },
@@ -84,7 +84,7 @@
 
   onMount(() => {
     loadProducts();
-    loadCategories();
+    loadcollections();
   });
 </script>
 
@@ -137,7 +137,7 @@
               <tr>
                 <th class="px-6 py-3">Name</th>
                 <th class="px-6 py-3">Price</th>
-                <th class="px-6 py-3">Category</th>
+                <th class="px-6 py-3">Collection</th>
                 <th class="px-6 py-3">Status</th>
                 <th class="px-6 py-3">Actions</th>
               </tr>
@@ -152,7 +152,7 @@
                     {product.name}
                   </td>
                   <td class="px-6 py-4">${product.price}</td>
-                  <td class="px-6 py-4">{categories.find(c => c.id === product.categoryId)?.name}</td>
+                  <td class="px-6 py-4">{collections.find(c => c.id === product.CollectionId)?.name}</td>
                   <td class="px-6 py-4">
                     <div class="flex gap-2 flex-wrap">
                       {#if product.onSale}
@@ -243,16 +243,16 @@
     </div>
     
     <div>
-      <Label for="category">Category</Label>
+      <Label for="collection">collection</Label>
       <Select
-        id="category"
-        bind:value={editingProduct.categoryId}
+        id="collection"
+        bind:value={editingProduct.CollectionId}
         required
         class="mt-1"
       >
-        <option value="" disabled>Select a category</option>
-        {#each categories as category}
-          <option value={category.id}>{category.name}</option>
+        <option value="" disabled>Select a collection</option>
+        {#each collections as collection}
+          <option value={collection.id}>{collection.name}</option>
         {/each}
       </Select>
     </div>
