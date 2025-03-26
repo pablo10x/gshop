@@ -4,6 +4,9 @@ import { sequence } from "@sveltejs/kit/hooks";
 import { db } from "$lib/server/database/database";
 import { user  as __user} from "$lib/schema/schema";
 import { eq } from "drizzle-orm";
+import { profileCache } from "$lib/server/cache";
+// Ensure the correct path to notificationStore is used
+import { notifications } from "$lib/stores/notificationStore"; // Adjust the path if necessary
 import {
   PUBLIC_SUPABASE_URL,
   PUBLIC_SUPABASE_ANON_KEY,
@@ -70,8 +73,54 @@ const supabase: Handle = async ({ event, resolve }) => {
     },
   });
 };
-
 const authGuard: Handle = async ({ event, resolve }) => {
+  const { session, user } = await event.locals.safeGetSession();
+  event.locals.session = session;
+  event.locals.user = user;
+
+  if (!event.locals.session && event.url.pathname.startsWith("/authed")) {
+    redirect(303, "/login");
+  }
+
+  if (event.url.pathname.startsWith("/admin")) {
+    if (!session?.user?.id) {
+      redirect(303, "/login");
+    }
+
+    // Check the cache for the user's profile
+    let dbUser = profileCache.get(session.user.id);
+
+    if (!dbUser) {
+      // Fetch from the database if not in c
+      console.log('caching now')
+      const [fetchedUser] = await db
+        .select()
+        .from(__user)
+        .where(eq(__user.id, session.user.id));
+
+      if (!fetchedUser) {
+        redirect(303, "/login");
+      }
+
+      // Cache the fetched user profile
+      profileCache.set(session.user.id, fetchedUser);
+      dbUser = fetchedUser;
+    }
+
+    if (dbUser.role !== "admin") {
+      console.log("admin required");
+      notifications.add("admin access");
+      redirect(303, "/login");
+    }
+  }
+
+  if (event.locals.session && event.url.pathname === "/login") {
+    redirect(303, "/");
+  }
+
+  return resolve(event);
+};
+/* const authGuard: Handle = async ({ event, resolve }) => {
   const { session, user } = await event.locals.safeGetSession();
   event.locals.session = session;
   event.locals.user = user;
@@ -91,16 +140,9 @@ const authGuard: Handle = async ({ event, resolve }) => {
     .where(eq(__user.id, session?.user.id));
    
     if (!dbUser || dbUser.role !== "admin") {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: {
-            code: 404,
-            message: "User not found in database",
-          },
-        }),
-        { status: 404, headers: { "Content-Type": "application/json" } }
-      );
+      console.log("admin required")
+      notifications.add('admin access')
+     redirect(303, "/login");
     }
 
   
@@ -110,6 +152,6 @@ const authGuard: Handle = async ({ event, resolve }) => {
   }
 
   return resolve(event);
-};
+}; */
 
 export const handle: Handle = sequence(supabase, authGuard);
